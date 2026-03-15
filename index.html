@@ -10,52 +10,48 @@
         :root { --primary: #00a651; --warning: #ffc107; --danger: #dc3545; --accent: #0056b3; --bg: #f4f7f6; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 10px; padding-bottom: 110px; color: #333; }
         
+        /* Kontener raportu - szerokość zablokowana dla PDF */
         #audit-container { 
             background: white; 
             max-width: 800px; 
             margin: auto; 
-            padding: 25px; 
+            padding: 30px; 
             border-radius: 12px; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             width: 100%;
             box-sizing: border-box;
+            position: relative;
         }
 
         .header-main { border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
         h1 { font-size: 1.4rem; color: var(--primary); text-align: center; margin: 0 0 15px 0; font-weight: 700; text-transform: uppercase; }
 
-        .info-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        
-        .geo-box {
-            flex: 1; min-width: 250px; background: #f8f9fa; padding: 12px; border-radius: 8px;
-            display: flex; align-items: center; gap: 10px; border: 1px solid #dfe6e9;
-        }
-        
-        .counter-box {
-            background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 100px;
-        }
-        .counter-box span { font-size: 1.2rem; font-weight: 800; }
-        .counter-box label { color: white; font-size: 0.6rem; margin: 0; }
+        .info-bar { display: flex; gap: 10px; margin-bottom: 20px; align-items: stretch; }
+        .geo-box { flex: 1; background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px solid #dfe6e9; display: flex; align-items: center; gap: 10px; }
+        .counter-box { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; text-align: center; min-width: 80px; }
+        .counter-box span { font-size: 1.4rem; font-weight: 800; display: block; }
+        .counter-box label { font-size: 0.6rem; font-weight: 700; color: rgba(255,255,255,0.8); }
 
-        .btn-geo { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700; }
+        .btn-geo { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 0.7rem; }
         #geo-link { font-size: 0.8rem; color: var(--accent); text-decoration: none; font-weight: 600; }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         label { display: block; font-weight: 700; font-size: 0.7rem; color: #7f8c8d; text-transform: uppercase; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 0.9rem; font-family: inherit; box-sizing: border-box; background: #fff; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 0.9rem; font-family: inherit; box-sizing: border-box; }
 
-        .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem; }
-        .stats-table th { background: #f8f9fa; border: 1px solid #eee; padding: 10px; }
-        .stats-table td { padding: 10px; text-align: center; border: 1px solid #eee; font-weight: 700; }
+        .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        .stats-table th { background: #f8f9fa; border: 1px solid #eee; padding: 10px; font-size: 0.8rem; }
+        .stats-table td { padding: 10px; text-align: center; border: 1px solid #eee; font-weight: 700; font-size: 0.9rem; }
 
-        .card { border: 1px solid #f1f2f6; padding: 15px; margin-top: 20px; border-radius: 10px; background: #fff; border-left: 6px solid var(--accent); position: relative; page-break-inside: avoid; }
-        .point-number { position: absolute; top: -12px; left: 10px; background: var(--accent); color: white; padding: 2px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+        .card { border: 1px solid #f1f2f6; padding: 15px; margin-top: 25px; border-radius: 10px; background: #fff; border-left: 6px solid var(--accent); position: relative; page-break-inside: avoid; }
+        .point-number { position: absolute; top: -12px; left: 10px; background: var(--accent); color: white; padding: 2px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
         
-        .btn-group-top { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; }
-        .btn-circle { width: 32px; height: 32px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        /* Ukrywanie przycisków w PDF */
+        .no-print { display: flex; gap: 5px; }
+        .btn-group-top { position: absolute; top: 10px; right: 10px; }
+        .btn-circle { width: 30px; height: 30px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        .footer-section { margin-top: 40px; padding-top: 20px; border-top: 2px solid #eee; }
+        .footer-section { margin-top: 40px; padding-top: 20px; border-top: 2px solid #eee; text-align: center; }
 
         .rating-C { background-color: #d4edda !important; }
         .rating-NC { background-color: #fff3cd !important; }
@@ -64,11 +60,7 @@
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 1000; }
         .btn-pdf { flex: 1; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 1rem; }
         
-        .preview-img { width: 100%; max-height: 300px; object-fit: contain; display: none; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; }
-        
-        @media print {
-            .btn-group-top, .nav-bar, .btn-geo, input[type="file"] { display: none !important; }
-        }
+        .preview-img { width: 100%; max-height: 350px; object-fit: contain; display: none; margin-top: 15px; border-radius: 8px; border: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -79,12 +71,12 @@
         
         <div class="info-bar">
             <div class="geo-box">
-                <button type="button" class="btn-geo" onclick="getLocation()">📍 GPS</button>
+                <button type="button" class="btn-geo no-print" onclick="getLocation()">📍 GPS</button>
                 <a id="geo-link" href="#" target="_blank">Lokalizacja: nieustalona</a>
             </div>
             <div class="counter-box">
                 <label>PUNKTY</label>
-                <span id="total-points">1</span>
+                <span id="total-points">0</span>
             </div>
         </div>
 
@@ -99,7 +91,7 @@
             </div>
             <div>
                 <label>Nr Projektu</label>
-                <input type="text" id="p_id" placeholder="Wpisz numer...">
+                <input type="text" id="p_id" placeholder="Nr projektu...">
             </div>
         </div>
     </div>
@@ -108,9 +100,9 @@
         <thead>
             <tr>
                 <th style="text-align: left;">Kategoria</th>
-                <th style="color: var(--primary); width: 60px;">C</th>
-                <th style="color: orange; width: 60px;">NC</th>
-                <th style="color: var(--danger); width: 60px;">MNC</th>
+                <th style="color: var(--primary); width: 50px;">C</th>
+                <th style="color: orange; width: 50px;">NC</th>
+                <th style="color: var(--danger); width: 50px;">MNC</th>
             </tr>
         </thead>
         <tbody id="stats-body"></tbody>
@@ -120,16 +112,10 @@
 
     <div class="footer-section">
         <div class="form-grid">
-            <div>
-                <label>Audytor</label>
-                <input type="text" id="p_auditor" placeholder="Imię i Nazwisko">
-            </div>
-            <div>
-                <label>Osoba towarzysząca</label>
-                <input type="text" id="p_escort" placeholder="Imię i Nazwisko">
-            </div>
+            <div><label>Audytor</label><input type="text" id="p_auditor"></div>
+            <div><label>Osoba towarzysząca</label><input type="text" id="p_escort"></div>
         </div>
-        <p style="font-size: 0.7rem; color: #aaa; text-align: center; margin-top: 30px;">Raport wygenerowany automatycznie przez system HSEQ Pro 2026</p>
+        <p style="font-size: 0.6rem; color: #999; margin-top: 20px;">System HSEQ Pro 2026</p>
     </div>
 </div>
 
@@ -157,9 +143,9 @@
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     link.href = `https://www.google.com/maps?q=${lat},${lon}`;
-                    link.innerText = `📍 Współrzędne: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+                    link.innerText = `📍 GPS: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
                 },
-                () => { link.innerText = "Błąd GPS"; }
+                () => { link.innerText = "Błąd lokalizacji"; }
             );
         }
     }
@@ -179,32 +165,32 @@
         div.id = id;
         div.innerHTML = `
             <div class="point-number">PUNKT</div>
-            <div class="btn-group-top">
+            <div class="btn-group-top no-print">
                 <button class="btn-circle" style="background:var(--accent)" onclick="addPoint()">+</button>
                 <button class="btn-circle" style="background:var(--danger)" onclick="removePoint('${id}')">−</button>
             </div>
-            <label style="margin-top:5px">Kategoria i Wymaganie</label>
-            <div class="form-grid">
+            <div class="form-grid" style="margin-top:10px">
+                <div><label>Kategoria</label>
                 <select class="main-cat" onchange="updateSub(this)">
-                    <option value="">Wybierz grupę...</option>
+                    <option value="">-- Wybierz --</option>
                     <option value="300">300 - Stanowisko</option>
                     <option value="400">400 - Zaplecze</option>
                     <option value="800">800 - Środowisko</option>
                     <option value="1200">1200 - System</option>
                     <option value="1500">1500 - Decyzja</option>
-                </select>
-                <select class="sub-cat" onchange="calc()"><option value="">Wybierz punkt...</option></select>
+                </select></div>
+                <div><label>Wymaganie</label>
+                <select class="sub-cat" onchange="calc()"><option value="">Wybierz...</option></select></div>
             </div>
             <div class="form-grid">
                 <div><label>Wykonawca</label><input type="text" oninput="calc()"></div>
                 <div><label>Ocena</label>
                 <select class="sel-rate" onchange="this.className='sel-rate rating-'+this.value; calc();">
-                    <option value="">--</option><option value="C">Zgodny (C)</option><option value="NC">Niezgodność (NC)</option><option value="MNC">Poważna (MNC)</option>
+                    <option value="">--</option><option value="C">C</option><option value="NC">NC</option><option value="MNC">MNC</option>
                 </select></div>
             </div>
-            <label>Opis / Uwagi</label>
-            <textarea rows="2" placeholder="Opisz stan faktyczny..."></textarea>
-            <input type="file" accept="image/*" capture="environment" onchange="preview(this)" style="margin-top:10px">
+            <textarea rows="2" placeholder="Uwagi i zalecenia..." style="margin-top:5px"></textarea>
+            <input type="file" accept="image/*" capture="environment" onchange="preview(this)" class="no-print" style="margin-top:10px">
             <img class="preview-img">
         `;
         document.getElementById('obs-list').appendChild(div);
@@ -254,23 +240,26 @@
         const element = document.getElementById('audit-container');
         const projId = document.getElementById('p_id').value || "Raport";
         
-        element.style.width = "800px"; 
+        // UKRYWAMY ELEMENTY INTERAKTYWNE PRZED GENEROWANIEM
+        const toHide = document.querySelectorAll('.no-print');
+        toHide.forEach(el => el.style.visibility = 'hidden');
 
-        const options = {
-            margin: [10, 10],
-            filename: 'HSEQ_' + projId + '.pdf',
-            image: { type: 'jpeg', quality: 0.95 },
+        // OPCJE NAPRAWIAJĄCE SKALĘ (A4: 210mm x 297mm)
+        const opt = {
+            margin: 10,
+            filename: `HSEQ_${projId}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { 
                 scale: 2, 
                 useCORS: true, 
-                logging: false,
+                width: 800, // Stała szerokość robocza renderera
                 windowWidth: 800 
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(options).from(element).save().then(() => {
-            element.style.width = "100%";
+        html2pdf().set(opt).from(element).save().then(() => {
+            toHide.forEach(el => el.style.visibility = 'visible');
         });
     }
 
