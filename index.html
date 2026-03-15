@@ -3,116 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HSEQ Pro 2026 - Raport PDF</title>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <title>HSEQ Pro 2026 - Mobile Audit</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: 'Arial', sans-serif; background: #f0f2f5; margin: 0; padding: 10px; }
-        #audit-container { background: white; max-width: 800px; margin: auto; padding: 20px; border-radius: 5px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 10px; padding-bottom: 80px; }
+        #audit-container { background: white; max-width: 850px; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         
-        /* Tabela Statystyk */
-        .stats-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85rem; }
-        .stats-table th, .stats-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        .stats-table th { background-color: #f8f9fa; color: #333; }
+        /* Nagłówek i Statystyki */
+        .header-main { border-bottom: 4px solid #00a651; padding-bottom: 15px; margin-bottom: 20px; }
+        .photo-grid-top { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .photo-box { border: 1px dashed #ccc; padding: 10px; text-align: center; border-radius: 5px; background: #fafafa; }
         
-        .header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-bottom: 3px solid #00a651; padding-bottom: 15px; }
-        .card { border: 1px solid #eee; padding: 15px; margin-top: 15px; border-radius: 8px; background: #fafafa; }
-        
-        /* Kolory dla PDF i UI */
-        .rating-C { background-color: #d4edda !important; color: #155724; }
-        .rating-NC { background-color: #fff3cd !important; color: #856404; }
-        .rating-MNC { background-color: #f8d7da !important; color: #721c24; }
+        .stats-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9rem; }
+        .stats-table th, .stats-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        .stats-table th { background: #00a651; color: white; }
 
-        label { display: block; font-weight: bold; margin-top: 10px; font-size: 0.8rem; color: #555; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
-        .photo-preview { width: 100%; max-height: 200px; object-fit: contain; display: none; margin-top: 10px; border: 1px solid #ddd; }
+        /* Karty punktów */
+        .card { border: 1px solid #e0e0e0; padding: 15px; margin-top: 15px; border-radius: 10px; background: #fff; border-left: 5px solid #0056b3; }
+        .rating-C { background-color: #c6efce !important; color: #006100; font-weight: bold; }
+        .rating-NC { background-color: #ffeb9c !important; color: #9c5700; font-weight: bold; }
+        .rating-MNC { background-color: #ffc7ce !important; color: #9c0006; font-weight: bold; }
+
+        label { display: block; font-weight: bold; margin-top: 12px; font-size: 0.8rem; color: #444; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; margin-top: 5px; }
+        .preview-img { width: 100%; max-height: 200px; object-fit: contain; display: none; margin-top: 10px; border-radius: 5px; }
         
-        .nav-buttons { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; }
-        .btn-add { background: #28a745; }
-        .btn-pdf { background: #dc3545; }
-        
-        @media print { .nav-buttons { display: none; } }
+        /* Przyciski */
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -3px 10px rgba(0,0,0,0.1); }
+        .btn { flex: 1; padding: 15px; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; }
+        .btn-add { background: #0056b3; }
+        .btn-pdf { background: #d32f2f; }
     </style>
 </head>
 <body>
 
 <div id="audit-container">
-    <div class="header-grid">
-        <div>
-            <h2 style="color: #00a651; margin: 0;">AUDYT HSEQ 2026</h2>
-            <label>Projekt</label>
-            <input type="text" id="proj" placeholder="Nazwa projektu...">
-            <label>Miejsce</label>
-            <select id="loc">
-                <option value="Zaplecze budowy">Zaplecze budowy</option>
-                <option value="Miejsce budowy">Miejsce budowy</option>
-                <option value="Biuro budowy">Biuro budowy</option>
-            </select>
+    <div class="header-main">
+        <h1 style="margin: 0; color: #00a651;">RAPORT AUDYTU HSEQ 2026</h1>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+            <div>
+                <label>Projekt / Numer</label>
+                <input type="text" id="p_info" placeholder="Np. LK400 ME / 250671">
+            </div>
+            <div>
+                <label>Miejsce / Lokalizacja</label>
+                <select id="p_loc">
+                    <option value="Zaplecze budowy">Zaplecze budowy</option>
+                    <option value="Miejsce budowy">Miejsce budowy</option>
+                    <option value="Biuro budowy">Biuro budowy</option>
+                </select>
+            </div>
         </div>
-        <div style="text-align: right;">
-            <label>Zdjęcie ogólne</label>
-            <input type="file" accept="image/*" capture="environment" onchange="preview(this)">
-            <img class="photo-preview" style="max-height: 100px; float: right;">
+
+        <div class="photo-grid-top">
+            <div class="photo-box">
+                <label>1. Lokalizacja (Mapa)</label>
+                <input type="file" accept="image/*" onchange="showPreview(this)">
+                <img class="preview-img">
+            </div>
+            <div class="photo-box">
+                <label>2. Widok ogólny</label>
+                <input type="file" accept="image/*" onchange="showPreview(this)">
+                <img class="preview-img">
+            </div>
         </div>
     </div>
 
-    <div id="statistics-section">
-        <h3 style="font-size: 1rem; margin-top: 20px;">Podsumowanie kontroli:</h3>
+    <div id="stats-section">
         <table class="stats-table">
             <thead>
                 <tr>
-                    <th>Kategoria</th>
-                    <th>Liczba sprawdzeń</th>
+                    <th>Nr Punktu</th>
+                    <th>Ilość sprawdzeń</th>
                     <th>Zgodne (C)</th>
                     <th>Niezgodne (NC/MNC)</th>
                 </tr>
             </thead>
             <tbody id="stats-body">
-                </tbody>
+                <tr><td colspan="4">Dodaj punkty, aby zobaczyć statystyki</td></tr>
+            </tbody>
         </table>
     </div>
 
-    <div id="entries"></div>
+    <div id="observation-list"></div>
 </div>
 
-<div style="height: 80px;"></div> <div class="nav-buttons">
-    <button class="btn btn-add" onclick="addEntry()">+ Punkt</button>
-    <button class="btn btn-pdf" onclick="generatePDF()">POBIERZ PDF</button>
+<div class="nav-bar">
+    <button class="btn btn-add" onclick="addPoint()">+ DODAJ PUNKT (800)</button>
+    <button class="btn btn-pdf" onclick="savePDF()">POBIERZ PDF</button>
 </div>
 
 <script>
-    const cat800 = {
+    const points800 = {
         "801": "Substancje niebezpieczne",
         "802": "Incydenty środowiskowe",
-        "804": "Gospodarka odpadami",
-        "805": "Emisje (hałas, pył)",
-        "809": "Park maszynowy",
-        "810": "Decyzje środowiskowe"
+        "804": "Gospodarka odpadami (komunalne/segregacja)",
+        "805": "Emisje (hałas, spaliny)",
+        "807": "Wyposażenie ADR/Sorbenty",
+        "809": "Park maszynowy"
     };
 
-    function addEntry() {
+    function addPoint() {
         const div = document.createElement('div');
-        div.className = 'card entry-item';
+        div.className = 'card obs-item';
         div.innerHTML = `
-            <select class="sel-cat" onchange="refreshStats()">
-                <option value="">-- Wybierz Punkt 800 --</option>
-                ${Object.entries(cat800).map(([k,v]) => `<option value="${k}">${k} - ${v}</option>`).join('')}
+            <label>Wybierz kategorię 800</label>
+            <select class="sel-cat" onchange="calcStats()">
+                <option value="">-- Wybierz --</option>
+                ${Object.entries(points800).map(([k,v]) => `<option value="${k}">${k} - ${v}</option>`).join('')}
             </select>
-            <textarea class="desc" placeholder="Opis (np. kontrola odpadów komunalnych...)" style="margin-top:10px"></textarea>
-            <select class="sel-rate" onchange="this.className='sel-rate rating-'+this.value; refreshStats();" style="margin-top:10px">
+            
+            <label>Opis sytuacji</label>
+            <textarea class="obs-desc" rows="2" placeholder="Opisz co sprawdzasz (np. odpady komunalne)..."></textarea>
+            
+            <label>Ocena</label>
+            <select class="sel-rate" onchange="this.className='sel-rate rating-'+this.value; calcStats();">
                 <option value="">-- Ocena --</option>
                 <option value="C">C - Zgodne</option>
                 <option value="NC">NC - Niezgodność</option>
-                <option value="MNC">MNC - Poważna</option>
+                <option value="MNC">MNC - Poważna Niezgodność</option>
             </select>
-            <input type="file" accept="image/*" capture="environment" onchange="preview(this)" style="margin-top:10px">
-            <img class="photo-preview">
+            
+            <label>Zdjęcie punktowe</label>
+            <input type="file" accept="image/*" capture="environment" onchange="showPreview(this)">
+            <img class="preview-img">
         `;
-        document.getElementById('entries').appendChild(div);
+        document.getElementById('observation-list').appendChild(div);
     }
 
-    function preview(input) {
+    function showPreview(input) {
         const img = input.nextElementSibling;
         if (input.files[0]) {
             img.src = URL.createObjectURL(input.files[0]);
@@ -120,40 +139,49 @@
         }
     }
 
-    function refreshStats() {
-        const summary = {};
-        document.querySelectorAll('.entry-item').forEach(item => {
-            const cat = item.querySelector('.sel-cat').value;
-            const rate = item.querySelector('.sel-rate').value;
-            if (cat) {
-                if (!summary[cat]) summary[cat] = { total: 0, ok: 0, fail: 0 };
-                summary[cat].total++;
-                if (rate === 'C') summary[cat].ok++;
-                if (rate === 'NC' || rate === 'MNC') summary[cat].fail++;
+    function calcStats() {
+        const data = {};
+        document.querySelectorAll('.obs-item').forEach(el => {
+            const c = el.querySelector('.sel-cat').value;
+            const r = el.querySelector('.sel-rate').value;
+            if(c) {
+                if(!data[c]) data[c] = { count: 0, c: 0, nc: 0 };
+                data[c].count++;
+                if(r === 'C') data[c].c++;
+                if(r === 'NC' || r === 'MNC') data[c].nc++;
             }
         });
 
         const tbody = document.getElementById('stats-body');
         tbody.innerHTML = '';
-        Object.entries(summary).forEach(([k, v]) => {
-            const row = `<tr><td>${k}</td><td>${v.total}</td><td style="color:green">${v.ok}</td><td style="color:red">${v.fail}</td></tr>`;
-            tbody.innerHTML += row;
+        if(Object.keys(data).length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4">Brak danych</td></tr>';
+            return;
+        }
+
+        Object.entries(data).forEach(([nr, val]) => {
+            tbody.innerHTML += `<tr>
+                <td><strong>${nr}</strong></td>
+                <td>${val.count}</td>
+                <td style="color:green">${val.c}</td>
+                <td style="color:red">${val.nc}</td>
+            </tr>`;
         });
     }
 
-    function generatePDF() {
+    function savePDF() {
         const element = document.getElementById('audit-container');
         const opt = {
             margin: 5,
             filename: 'Raport_HSEQ_2026.pdf',
-            image: { type: 'jpeg', quality: 0.95 },
-            html2canvas: { scale: 2, useCORS: true },
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         html2pdf().set(opt).from(element).save();
     }
 
-    addEntry(); // Start z jednym punktem
+    addPoint();
 </script>
 </body>
 </html>
