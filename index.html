@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HSEQ Audit Pro 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -10,20 +10,21 @@
         :root { --primary: #00a651; --warning: #ffc107; --danger: #dc3545; --accent: #0056b3; --bg: #f4f7f6; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 10px; padding-bottom: 110px; color: #333; }
         
+        /* Kluczowe dla poprawnego PDF */
         #audit-container { 
             background: white; 
             max-width: 800px; 
             margin: auto; 
-            padding: 20px; 
+            padding: 25px; 
             border-radius: 12px; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .header-main { border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
-        h1 { font-size: 1.3rem; color: var(--primary); text-align: center; margin: 0 0 15px 0; font-weight: 700; }
+        h1 { font-size: 1.4rem; color: var(--primary); text-align: center; margin: 0 0 15px 0; font-weight: 700; text-transform: uppercase; }
 
-        /* Sekcja Geolokalizacji */
         .geo-box {
             background: #f8f9fa;
             padding: 12px;
@@ -34,57 +35,47 @@
             gap: 12px;
             border: 1px solid #dfe6e9;
         }
-        .btn-geo {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-        #geo-link {
-            font-size: 0.85rem;
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-        }
+        .btn-geo { background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700; }
+        #geo-link { font-size: 0.85rem; color: var(--accent); text-decoration: none; font-weight: 600; }
 
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        label { display: block; font-weight: 700; font-size: 0.7rem; color: #7f8c8d; text-transform: uppercase; margin-bottom: 4px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 0.9rem; font-family: inherit; box-sizing: border-box; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        label { display: block; font-weight: 700; font-size: 0.7rem; color: #7f8c8d; text-transform: uppercase; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 0.9rem; font-family: inherit; box-sizing: border-box; background: #fff; }
 
-        .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.8rem; }
-        .stats-table th { background: #f8f9fa; border-bottom: 2px solid var(--primary); padding: 8px; }
-        .stats-table td { padding: 8px; text-align: center; border-bottom: 1px solid #f1f2f6; font-weight: 700; }
+        .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem; }
+        .stats-table th { background: #f8f9fa; border: 1px solid #eee; padding: 10px; }
+        .stats-table td { padding: 10px; text-align: center; border: 1px solid #eee; font-weight: 700; }
 
-        .card { border: 1px solid #f1f2f6; padding: 15px; margin-top: 15px; border-radius: 10px; background: #fff; border-left: 5px solid var(--accent); position: relative; }
-        .btn-group-top { position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; }
-        .btn-circle { width: 30px; height: 30px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .card { border: 1px solid #f1f2f6; padding: 15px; margin-top: 20px; border-radius: 10px; background: #fff; border-left: 6px solid var(--accent); position: relative; page-break-inside: avoid; }
+        .btn-group-top { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; }
+        .btn-circle { width: 32px; height: 32px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        .footer-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid #eee; }
+        .footer-section { margin-top: 40px; padding-top: 20px; border-top: 2px solid #eee; }
 
         .rating-C { background-color: #d4edda !important; }
         .rating-NC { background-color: #fff3cd !important; }
         .rating-MNC { background-color: #f8d7da !important; }
 
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 1000; }
-        .btn-pdf { flex: 1; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
-        .preview-img { width: 100%; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border-radius: 6px; border: 1px solid #eee; }
+        .btn-pdf { flex: 1; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        
+        .preview-img { width: 100%; max-height: 300px; object-fit: contain; display: none; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; }
+        
+        @media print {
+            .btn-group-top, .nav-bar, .btn-geo, input[type="file"] { display: none !important; }
+        }
     </style>
 </head>
 <body>
 
 <div id="audit-container">
     <div class="header-main">
-        <h1>RAPORT AUDYTU HSEQ 2026</h1>
+        <h1>Raport Audytu HSEQ 2026</h1>
         
         <div class="geo-box">
             <button type="button" class="btn-geo" onclick="getLocation()">📍 POBIERZ GPS</button>
             <div id="location-display">
-                <a id="geo-link" href="#" target="_blank">Lokalizacja zaplecza: nieustalona</a>
+                <a id="geo-link" href="#" target="_blank">Lokalizacja: nieustalona</a>
             </div>
         </div>
 
@@ -107,10 +98,10 @@
     <table class="stats-table">
         <thead>
             <tr>
-                <th>Kategoria</th>
-                <th style="color: var(--primary);">C</th>
-                <th style="color: orange;">NC</th>
-                <th style="color: var(--danger);">MNC</th>
+                <th style="text-align: left;">Kategoria</th>
+                <th style="color: var(--primary); width: 60px;">C</th>
+                <th style="color: orange; width: 60px;">NC</th>
+                <th style="color: var(--danger); width: 60px;">MNC</th>
             </tr>
         </thead>
         <tbody id="stats-body"></tbody>
@@ -121,15 +112,15 @@
     <div class="footer-section">
         <div class="form-grid">
             <div>
-                <label>Audytor (Imię i Nazwisko)</label>
-                <input type="text" id="p_auditor" placeholder="Kto przeprowadza?">
+                <label>Audytor</label>
+                <input type="text" id="p_auditor" placeholder="Imię i Nazwisko">
             </div>
             <div>
                 <label>Osoba towarzysząca</label>
-                <input type="text" id="p_escort" placeholder="Kto towarzyszył?">
+                <input type="text" id="p_escort" placeholder="Imię i Nazwisko">
             </div>
         </div>
-        <p style="font-size: 0.6rem; color: #999; text-align: center; margin-top: 20px;">Wygenerowano systemem HSEQ Pro 2026</p>
+        <p style="font-size: 0.7rem; color: #aaa; text-align: center; margin-top: 30px;">Raport wygenerowany automatycznie przez system HSEQ Pro 2026</p>
     </div>
 </div>
 
@@ -151,24 +142,16 @@
     function getLocation() {
         const link = document.getElementById('geo-link');
         if (navigator.geolocation) {
-            link.innerText = "Pobieranie współrzędnych...";
+            link.innerText = "Pobieranie...";
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-                    link.href = googleMapsUrl;
-                    link.innerText = `📍 Lokalizacja: ${lat.toFixed(5)}, ${lon.toFixed(5)} (Kliknij by sprawdzić)`;
-                    link.style.color = "#00a651";
+                    link.href = `https://www.google.com/maps?q=${lat},${lon}`;
+                    link.innerText = `📍 Lokalizacja zaplecza: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
                 },
-                (error) => {
-                    link.innerText = "Błąd: Włącz uprawnienia lokalizacji w telefonie";
-                    link.style.color = "red";
-                },
-                { enableHighAccuracy: true }
+                () => { link.innerText = "Błąd GPS - sprawdź uprawnienia"; }
             );
-        } else {
-            link.innerText = "Geolokalizacja nie jest wspierana przez Twoją przeglądarkę";
         }
     }
 
@@ -182,25 +165,27 @@
                 <button class="btn-circle" style="background:var(--accent)" onclick="addPoint()">+</button>
                 <button class="btn-circle" style="background:var(--danger)" onclick="removePoint('${id}')">−</button>
             </div>
-            <label>Kategoria</label>
-            <select class="main-cat" onchange="updateSub(this)">
-                <option value="">-- Wybierz --</option>
-                <option value="300">300 - Stanowisko</option>
-                <option value="400">400 - Zaplecze</option>
-                <option value="800">800 - Środowisko</option>
-                <option value="1200">1200 - System</option>
-                <option value="1500">1500 - Decyzja</option>
-            </select>
-            <label style="margin-top:10px">Wymaganie</label>
-            <select class="sub-cat" onchange="calc()"><option value="">Wybierz kategorię...</option></select>
-            <div class="form-grid" style="margin-top:10px">
-                <div><label>Firma</label><input type="text" oninput="calc()"></div>
+            <label>Kategoria i Wymaganie</label>
+            <div class="form-grid">
+                <select class="main-cat" onchange="updateSub(this)">
+                    <option value="">Wybierz grupę...</option>
+                    <option value="300">300 - Stanowisko</option>
+                    <option value="400">400 - Zaplecze</option>
+                    <option value="800">800 - Środowisko</option>
+                    <option value="1200">1200 - System</option>
+                    <option value="1500">1500 - Decyzja</option>
+                </select>
+                <select class="sub-cat" onchange="calc()"><option value="">Wybierz punkt...</option></select>
+            </div>
+            <div class="form-grid">
+                <div><label>Wykonawca</label><input type="text" oninput="calc()"></div>
                 <div><label>Ocena</label>
                 <select class="sel-rate" onchange="this.className='sel-rate rating-'+this.value; calc();">
-                    <option value="">--</option><option value="C">C</option><option value="NC">NC</option><option value="MNC">MNC</option>
+                    <option value="">--</option><option value="C">Zgodny (C)</option><option value="NC">Niezgodność (NC)</option><option value="MNC">Poważna (MNC)</option>
                 </select></div>
             </div>
-            <textarea rows="2" style="margin-top:10px" placeholder="Uwagi..."></textarea>
+            <label>Opis / Uwagi</label>
+            <textarea rows="2" placeholder="Opisz stan faktyczny..."></textarea>
             <input type="file" accept="image/*" capture="environment" onchange="preview(this)" style="margin-top:10px">
             <img class="preview-img">
         `;
@@ -238,28 +223,34 @@
         const tbody = document.getElementById('stats-body');
         tbody.innerHTML = '';
         Object.entries(stats).forEach(([k, v]) => {
-            tbody.innerHTML += `<tr><td>${k}</td><td style="color:green">${v.c}</td><td style="color:orange">${v.nc}</td><td style="color:red">${v.mnc}</td></tr>`;
+            tbody.innerHTML += `<tr><td style="text-align:left">${k}</td><td>${v.c}</td><td>${v.nc}</td><td>${v.mnc}</td></tr>`;
         });
     }
 
     function savePDF() {
         const element = document.getElementById('audit-container');
-        const projId = document.getElementById('p_id').value || "Raport_HSEQ";
+        const projId = document.getElementById('p_id').value || "Raport";
         
+        // WYMUSZENIE SZEROKOŚCI DLA RENDERERA
+        element.style.width = "800px"; 
+
         const options = {
-            margin: 5,
-            filename: projId + '.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
+            margin: [10, 10],
+            filename: 'HSEQ_' + projId + '.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
             html2canvas: { 
                 scale: 2, 
                 useCORS: true, 
-                scrollY: -window.scrollY,
-                windowWidth: 850 
+                logging: false,
+                letterRendering: true,
+                windowWidth: 800 // To naprawia ucinanie prawej strony
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(options).from(element).save();
+        html2pdf().set(options).from(element).save().then(() => {
+            element.style.width = "100%"; // Przywrócenie responsywności po pobraniu
+        });
     }
 
     addPoint();
