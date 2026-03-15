@@ -17,11 +17,40 @@
             padding: 20px; 
             border-radius: 12px; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            overflow: hidden; /* Ważne dla PDF na mobile */
+            overflow: hidden;
         }
 
         .header-main { border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
         h1 { font-size: 1.3rem; color: var(--primary); text-align: center; margin: 0 0 15px 0; font-weight: 700; }
+
+        /* Sekcja Geolokalizacji */
+        .geo-box {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #dfe6e9;
+        }
+        .btn-geo {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        #geo-link {
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         label { display: block; font-weight: 700; font-size: 0.7rem; color: #7f8c8d; text-transform: uppercase; margin-bottom: 4px; }
@@ -43,7 +72,7 @@
 
         .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 1000; }
         .btn-pdf { flex: 1; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
-        .preview-img { width: 100%; max-height: 200px; object-fit: contain; display: none; margin-top: 10px; border-radius: 6px; }
+        .preview-img { width: 100%; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border-radius: 6px; border: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -51,6 +80,14 @@
 <div id="audit-container">
     <div class="header-main">
         <h1>RAPORT AUDYTU HSEQ 2026</h1>
+        
+        <div class="geo-box">
+            <button type="button" class="btn-geo" onclick="getLocation()">📍 POBIERZ GPS</button>
+            <div id="location-display">
+                <a id="geo-link" href="#" target="_blank">Lokalizacja zaplecza: nieustalona</a>
+            </div>
+        </div>
+
         <div class="form-grid">
             <div style="grid-column: span 2;">
                 <label>Nazwa Projektu</label>
@@ -110,6 +147,30 @@
         "1200": ["1201 - Plan Zarządzania", "1203 - Audyty zewn.", "1204 - Raporty", "1205 - Rejestry"],
         "1500": ["1501 - Wycinka", "1504 - Herpetologia", "1505 - Wody opadowe", "1506 - Skarpy", "1509 - Terminy prac"]
     };
+
+    function getLocation() {
+        const link = document.getElementById('geo-link');
+        if (navigator.geolocation) {
+            link.innerText = "Pobieranie współrzędnych...";
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+                    link.href = googleMapsUrl;
+                    link.innerText = `📍 Lokalizacja: ${lat.toFixed(5)}, ${lon.toFixed(5)} (Kliknij by sprawdzić)`;
+                    link.style.color = "#00a651";
+                },
+                (error) => {
+                    link.innerText = "Błąd: Włącz uprawnienia lokalizacji w telefonie";
+                    link.style.color = "red";
+                },
+                { enableHighAccuracy: true }
+            );
+        } else {
+            link.innerText = "Geolokalizacja nie jest wspierana przez Twoją przeglądarkę";
+        }
+    }
 
     function addPoint() {
         const id = 'pt-' + Date.now();
@@ -185,7 +246,6 @@
         const element = document.getElementById('audit-container');
         const projId = document.getElementById('p_id').value || "Raport_HSEQ";
         
-        // Optymalizacja pod mobile
         const options = {
             margin: 5,
             filename: projId + '.pdf',
@@ -193,7 +253,7 @@
             html2canvas: { 
                 scale: 2, 
                 useCORS: true, 
-                scrollY: -window.scrollY, // Zapobiega przesunięciom na mobile
+                scrollY: -window.scrollY,
                 windowWidth: 850 
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
