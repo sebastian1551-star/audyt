@@ -3,176 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HSEQ Pro 2026</title>
+    <title>HSEQ Pro 2026 - Raport PDF</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; background: #f0f2f5; }
-        .card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px; border-left: 6px solid #0056b3; }
-        h2 { color: #0056b3; font-size: 0.9rem; margin-top: 0; text-transform: uppercase; }
-        label { display: block; margin: 10px 0 5px; font-weight: bold; font-size: 0.85rem; color: #444; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccd0d5; border-radius: 8px; box-sizing: border-box; font-size: 1rem; margin-bottom: 5px; }
+        body { font-family: 'Arial', sans-serif; background: #f0f2f5; margin: 0; padding: 10px; }
+        #audit-container { background: white; max-width: 800px; margin: auto; padding: 20px; border-radius: 5px; }
         
-        /* Styl kolorów ocen */
-        .rating-C { background-color: #c6efce !important; color: #006100; font-weight: bold; }
-        .rating-NC { background-color: #ffeb9c !important; color: #9c5700; font-weight: bold; }
-        .rating-MNC { background-color: #ffc7ce !important; color: #9c0006; font-weight: bold; }
+        /* Tabela Statystyk */
+        .stats-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85rem; }
+        .stats-table th, .stats-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        .stats-table th { background-color: #f8f9fa; color: #333; }
+        
+        .header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-bottom: 3px solid #00a651; padding-bottom: 15px; }
+        .card { border: 1px solid #eee; padding: 15px; margin-top: 15px; border-radius: 8px; background: #fafafa; }
+        
+        /* Kolory dla PDF i UI */
+        .rating-C { background-color: #d4edda !important; color: #155724; }
+        .rating-NC { background-color: #fff3cd !important; color: #856404; }
+        .rating-MNC { background-color: #f8d7da !important; color: #721c24; }
 
-        .photo-preview { width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px; margin-top: 10px; display: none; background: #eee; }
+        label { display: block; font-weight: bold; margin-top: 10px; font-size: 0.8rem; color: #555; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+        .photo-preview { width: 100%; max-height: 200px; object-fit: contain; display: none; margin-top: 10px; border: 1px solid #ddd; }
         
-        .btn { background: #28a745; color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-loc { background: #6c757d; font-size: 0.8rem; padding: 8px; }
-        .btn-export { background: #007bff; margin-top: 25px; margin-bottom: 50px; }
-        .observation-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .badge { background: #0056b3; color: white; padding: 3px 8px; border-radius: 5px; font-size: 0.8rem; }
+        .nav-buttons { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; }
+        .btn-add { background: #28a745; }
+        .btn-pdf { background: #dc3545; }
+        
+        @media print { .nav-buttons { display: none; } }
     </style>
 </head>
 <body>
 
-    <div class="card" style="border-left-color: #dc3545;">
-        <h2>Zdjęcie Ogólne Audytu</h2>
-        <input type="file" accept="image/*" capture="environment" onchange="previewImage(this)">
-        <img class="photo-preview">
+<div id="audit-container">
+    <div class="header-grid">
+        <div>
+            <h2 style="color: #00a651; margin: 0;">AUDYT HSEQ 2026</h2>
+            <label>Projekt</label>
+            <input type="text" id="proj" placeholder="Nazwa projektu...">
+            <label>Miejsce</label>
+            <select id="loc">
+                <option value="Zaplecze budowy">Zaplecze budowy</option>
+                <option value="Miejsce budowy">Miejsce budowy</option>
+                <option value="Biuro budowy">Biuro budowy</option>
+            </select>
+        </div>
+        <div style="text-align: right;">
+            <label>Zdjęcie ogólne</label>
+            <input type="file" accept="image/*" capture="environment" onchange="preview(this)">
+            <img class="photo-preview" style="max-height: 100px; float: right;">
+        </div>
     </div>
 
-    <div class="card">
-        <h2>Nagłówek Raportu</h2>
-        <input type="text" id="project" placeholder="Nazwa projektu (np. LK400 ME Kartoszyn)">
-        <input type="text" id="projectNr" placeholder="Nr projektu (np. 250671)">
-        
-        <label>Miejsce audytowane</label>
-        <select id="auditLocation">
-            <option value="">-- Wybierz miejsce --</option>
-            <option value="Zaplecze budowy">Zaplecze budowy</option>
-            <option value="Miejsce budowy">Miejsce budowy</option>
-            <option value="Biuro budowy">Biuro budowy</option>
-        </select>
-
-        <label>Lokalizacja GPS</label>
-        <input type="url" id="mapsLink" placeholder="Link do Google Maps">
-        <button class="btn btn-loc" onclick="getLocation()">📍 Pobierz moją lokalizację</button>
+    <div id="statistics-section">
+        <h3 style="font-size: 1rem; margin-top: 20px;">Podsumowanie kontroli:</h3>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>Kategoria</th>
+                    <th>Liczba sprawdzeń</th>
+                    <th>Zgodne (C)</th>
+                    <th>Niezgodne (NC/MNC)</th>
+                </tr>
+            </thead>
+            <tbody id="stats-body">
+                </tbody>
+        </table>
     </div>
 
-    <div id="observationsContainer"></div>
+    <div id="entries"></div>
+</div>
 
-    <button class="btn" onclick="addObservation()">+ Dodaj Punkt Audytu</button>
-    <button class="btn btn-export" onclick="exportToExcel()">Zapisz do EXCEL (.xlsx)</button>
+<div style="height: 80px;"></div> <div class="nav-buttons">
+    <button class="btn btn-add" onclick="addEntry()">+ Punkt</button>
+    <button class="btn btn-pdf" onclick="generatePDF()">POBIERZ PDF</button>
+</div>
 
-    <script>
-        // Dane z Twojej tabeli kategorii 
-        const hseqData = {
-            "800 - ŚRODOWISKO": [
-                "801 - Ochrona wód i gleby (maty, sorbenty)",
-                "804 - Prawidłowa gospodarka odpadami",
-                "805 - Magazynowanie substancji niebezpiecznych",
-                "807 - Porządek w miejscu pracy / zaplecze"
-            ],
-            "900 - JAKOŚĆ": [
-                "901 - Zgodność z dokumentacją projektową",
-                "902 - Kontrola jakości dostaw i materiałów",
-                "903 - Przechowywanie dokumentacji technicznej",
-                "905 - Prawidłowość wykonania robót"
-            ]
+<script>
+    const cat800 = {
+        "801": "Substancje niebezpieczne",
+        "802": "Incydenty środowiskowe",
+        "804": "Gospodarka odpadami",
+        "805": "Emisje (hałas, pył)",
+        "809": "Park maszynowy",
+        "810": "Decyzje środowiskowe"
+    };
+
+    function addEntry() {
+        const div = document.createElement('div');
+        div.className = 'card entry-item';
+        div.innerHTML = `
+            <select class="sel-cat" onchange="refreshStats()">
+                <option value="">-- Wybierz Punkt 800 --</option>
+                ${Object.entries(cat800).map(([k,v]) => `<option value="${k}">${k} - ${v}</option>`).join('')}
+            </select>
+            <textarea class="desc" placeholder="Opis (np. kontrola odpadów komunalnych...)" style="margin-top:10px"></textarea>
+            <select class="sel-rate" onchange="this.className='sel-rate rating-'+this.value; refreshStats();" style="margin-top:10px">
+                <option value="">-- Ocena --</option>
+                <option value="C">C - Zgodne</option>
+                <option value="NC">NC - Niezgodność</option>
+                <option value="MNC">MNC - Poważna</option>
+            </select>
+            <input type="file" accept="image/*" capture="environment" onchange="preview(this)" style="margin-top:10px">
+            <img class="photo-preview">
+        `;
+        document.getElementById('entries').appendChild(div);
+    }
+
+    function preview(input) {
+        const img = input.nextElementSibling;
+        if (input.files[0]) {
+            img.src = URL.createObjectURL(input.files[0]);
+            img.style.display = 'block';
+        }
+    }
+
+    function refreshStats() {
+        const summary = {};
+        document.querySelectorAll('.entry-item').forEach(item => {
+            const cat = item.querySelector('.sel-cat').value;
+            const rate = item.querySelector('.sel-rate').value;
+            if (cat) {
+                if (!summary[cat]) summary[cat] = { total: 0, ok: 0, fail: 0 };
+                summary[cat].total++;
+                if (rate === 'C') summary[cat].ok++;
+                if (rate === 'NC' || rate === 'MNC') summary[cat].fail++;
+            }
+        });
+
+        const tbody = document.getElementById('stats-body');
+        tbody.innerHTML = '';
+        Object.entries(summary).forEach(([k, v]) => {
+            const row = `<tr><td>${k}</td><td>${v.total}</td><td style="color:green">${v.ok}</td><td style="color:red">${v.fail}</td></tr>`;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function generatePDF() {
+        const element = document.getElementById('audit-container');
+        const opt = {
+            margin: 5,
+            filename: 'Raport_HSEQ_2026.pdf',
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
+        html2pdf().set(opt).from(element).save();
+    }
 
-        let obsCount = 0;
-
-        function addObservation() {
-            obsCount++;
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.innerHTML = `
-                <div class="observation-header">
-                    <span class="badge">PUNKT ${obsCount}</span>
-                </div>
-
-                <label>Grupa</label>
-                <select class="group-select" onchange="updateSubCats(this)">
-                    <option value="">-- Wybierz Grupę --</option>
-                    ${Object.keys(hseqData).map(g => `<option value="${g}">${g}</option>`).join('')}
-                </select>
-
-                <label>Szczegółowa kategoria</label>
-                <select class="cat-select" disabled>
-                    <option value="">Najpierw wybierz grupę...</option>
-                </select>
-
-                <label>Opis i uwagi</label>
-                <textarea class="obs-desc" rows="3" placeholder="Co stwierdzono?"></textarea>
-
-                <label>Ocena</label>
-                <select class="obs-rating" onchange="applyRatingStyle(this)">
-                    <option value="">-- Wybierz --</option>
-                    <option value="C">C - Zgodne</option>
-                    <option value="NC">NC - Niezgodność</option>
-                    <option value="MNC">MNC - Poważna Niezgodność</option>
-                </select>
-
-                <label>Zdjęcie punktu</label>
-                <input type="file" accept="image/*" capture="environment" onchange="previewImage(this)">
-                <img class="photo-preview">
-            `;
-            document.getElementById('observationsContainer').appendChild(div);
-        }
-
-        function updateSubCats(groupEl) {
-            const subCatEl = groupEl.nextElementSibling.nextElementSibling; // wybiera .cat-select
-            const groupName = groupEl.value;
-            subCatEl.innerHTML = '<option value="">-- Wybierz Podpunkt --</option>';
-            
-            if (groupName && hseqData[groupName]) {
-                hseqData[groupName].forEach(item => {
-                    const opt = document.createElement('option');
-                    opt.value = item;
-                    opt.textContent = item;
-                    subCatEl.appendChild(opt);
-                });
-                subCatEl.disabled = false;
-            } else {
-                subCatEl.disabled = true;
-            }
-        }
-
-        function applyRatingStyle(el) {
-            el.className = 'obs-rating rating-' + el.value;
-        }
-
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    const link = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
-                    document.getElementById('mapsLink').value = link;
-                }, () => alert("Nie udało się pobrać lokalizacji. Sprawdź uprawnienia GPS."));
-            }
-        }
-
-        function previewImage(input) {
-            const img = input.nextElementSibling;
-            if (input.files && input.files[0]) {
-                img.src = URL.createObjectURL(input.files[0]);
-                img.style.display = 'block';
-            }
-        }
-
-        function exportToExcel() {
-            const results = [];
-            document.querySelectorAll('#observationsContainer .card').forEach((card, i) => {
-                results.push({
-                    "LP": i + 1,
-                    "Projekt": document.getElementById('project').value,
-                    "Miejsce": document.getElementById('auditLocation').value,
-                    "Kategoria": card.querySelector('.cat-select').value,
-                    "Opis": card.querySelector('.obs-desc').value,
-                    "Ocena": card.querySelector('.obs-rating').value,
-                    "Lokalizacja": document.getElementById('mapsLink').value
-                });
-            });
-            const ws = XLSX.utils.json_to_sheet(results);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Raport");
-            XLSX.writeFile(wb, `Audyt_HSEQ_${new Date().toLocaleDateString()}.xlsx`);
-        }
-
-        addObservation();
-    </script>
+    addEntry(); // Start z jednym punktem
+</script>
 </body>
 </html>
