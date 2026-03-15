@@ -10,7 +10,6 @@
         :root { --primary: #00a651; --warning: #ffc107; --danger: #dc3545; --accent: #0056b3; --bg: #f4f7f6; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 10px; padding-bottom: 110px; color: #333; }
         
-        /* Kluczowe dla poprawnego PDF */
         #audit-container { 
             background: white; 
             max-width: 800px; 
@@ -25,18 +24,22 @@
         .header-main { border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
         h1 { font-size: 1.4rem; color: var(--primary); text-align: center; margin: 0 0 15px 0; font-weight: 700; text-transform: uppercase; }
 
+        .info-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        
         .geo-box {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid #dfe6e9;
+            flex: 1; min-width: 250px; background: #f8f9fa; padding: 12px; border-radius: 8px;
+            display: flex; align-items: center; gap: 10px; border: 1px solid #dfe6e9;
         }
-        .btn-geo { background: var(--accent); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700; }
-        #geo-link { font-size: 0.85rem; color: var(--accent); text-decoration: none; font-weight: 600; }
+        
+        .counter-box {
+            background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 100px;
+        }
+        .counter-box span { font-size: 1.2rem; font-weight: 800; }
+        .counter-box label { color: white; font-size: 0.6rem; margin: 0; }
+
+        .btn-geo { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700; }
+        #geo-link { font-size: 0.8rem; color: var(--accent); text-decoration: none; font-weight: 600; }
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         label { display: block; font-weight: 700; font-size: 0.7rem; color: #7f8c8d; text-transform: uppercase; margin-bottom: 5px; }
@@ -47,6 +50,8 @@
         .stats-table td { padding: 10px; text-align: center; border: 1px solid #eee; font-weight: 700; }
 
         .card { border: 1px solid #f1f2f6; padding: 15px; margin-top: 20px; border-radius: 10px; background: #fff; border-left: 6px solid var(--accent); position: relative; page-break-inside: avoid; }
+        .point-number { position: absolute; top: -12px; left: 10px; background: var(--accent); color: white; padding: 2px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+        
         .btn-group-top { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; }
         .btn-circle { width: 32px; height: 32px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
@@ -72,10 +77,14 @@
     <div class="header-main">
         <h1>Raport Audytu HSEQ 2026</h1>
         
-        <div class="geo-box">
-            <button type="button" class="btn-geo" onclick="getLocation()">📍 POBIERZ GPS</button>
-            <div id="location-display">
+        <div class="info-bar">
+            <div class="geo-box">
+                <button type="button" class="btn-geo" onclick="getLocation()">📍 GPS</button>
                 <a id="geo-link" href="#" target="_blank">Lokalizacja: nieustalona</a>
+            </div>
+            <div class="counter-box">
+                <label>PUNKTY</label>
+                <span id="total-points">1</span>
             </div>
         </div>
 
@@ -148,11 +157,19 @@
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     link.href = `https://www.google.com/maps?q=${lat},${lon}`;
-                    link.innerText = `📍 Lokalizacja zaplecza: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+                    link.innerText = `📍 Współrzędne: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
                 },
-                () => { link.innerText = "Błąd GPS - sprawdź uprawnienia"; }
+                () => { link.innerText = "Błąd GPS"; }
             );
         }
+    }
+
+    function updateNumbers() {
+        const items = document.querySelectorAll('.obs-item');
+        items.forEach((item, index) => {
+            item.querySelector('.point-number').innerText = `PUNKT ${index + 1}`;
+        });
+        document.getElementById('total-points').innerText = items.length;
     }
 
     function addPoint() {
@@ -161,11 +178,12 @@
         div.className = 'card obs-item';
         div.id = id;
         div.innerHTML = `
+            <div class="point-number">PUNKT</div>
             <div class="btn-group-top">
                 <button class="btn-circle" style="background:var(--accent)" onclick="addPoint()">+</button>
                 <button class="btn-circle" style="background:var(--danger)" onclick="removePoint('${id}')">−</button>
             </div>
-            <label>Kategoria i Wymaganie</label>
+            <label style="margin-top:5px">Kategoria i Wymaganie</label>
             <div class="form-grid">
                 <select class="main-cat" onchange="updateSub(this)">
                     <option value="">Wybierz grupę...</option>
@@ -190,6 +208,7 @@
             <img class="preview-img">
         `;
         document.getElementById('obs-list').appendChild(div);
+        updateNumbers();
     }
 
     function updateSub(el) {
@@ -200,7 +219,11 @@
     }
 
     function removePoint(id) {
-        if(document.querySelectorAll('.obs-item').length > 1) { document.getElementById(id).remove(); calc(); }
+        if(document.querySelectorAll('.obs-item').length > 1) { 
+            document.getElementById(id).remove(); 
+            updateNumbers();
+            calc(); 
+        }
     }
 
     function preview(input) {
@@ -231,7 +254,6 @@
         const element = document.getElementById('audit-container');
         const projId = document.getElementById('p_id').value || "Raport";
         
-        // WYMUSZENIE SZEROKOŚCI DLA RENDERERA
         element.style.width = "800px"; 
 
         const options = {
@@ -242,14 +264,13 @@
                 scale: 2, 
                 useCORS: true, 
                 logging: false,
-                letterRendering: true,
-                windowWidth: 800 // To naprawia ucinanie prawej strony
+                windowWidth: 800 
             },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
         html2pdf().set(options).from(element).save().then(() => {
-            element.style.width = "100%"; // Przywrócenie responsywności po pobraniu
+            element.style.width = "100%";
         });
     }
 
