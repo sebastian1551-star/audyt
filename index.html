@@ -3,75 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HSEQ Audit System 2026</title>
+    <title>HSEQ Audit Pro 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root { --primary: #00a651; --danger: #dc3545; --accent: #0056b3; --bg: #f8f9fa; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 15px; padding-bottom: 100px; }
-        #audit-container { background: white; max-width: 800px; margin: auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        :root { --primary: #00a651; --warning: #ffc107; --danger: #dc3545; --accent: #0056b3; --bg: #f8f9fa; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 10px; padding-bottom: 100px; }
+        #audit-container { background: white; max-width: 850px; margin: auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         
-        .header-main { border-bottom: 3px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
-        .row-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .header-main { border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
+        h1 { font-size: 1.2rem; color: var(--primary); text-align: center; margin-bottom: 15px; }
+
+        .row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        label { display: block; font-weight: 700; font-size: 0.7rem; color: #666; text-transform: uppercase; margin-bottom: 4px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; box-sizing: border-box; }
+
+        /* Tabela Statystyk - Rozdzielone NC i MNC */
+        .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.8rem; }
+        .stats-table th { background: #f8f9fa; border-bottom: 2px solid var(--primary); padding: 8px; }
+        .stats-table td { padding: 8px; text-align: center; border-bottom: 1px solid #eee; font-weight: bold; }
+
+        /* Karta Punktu */
+        .card { border: 1px solid #eee; padding: 15px; margin-top: 15px; border-radius: 10px; background: #fff; border-left: 5px solid var(--accent); position: relative; }
+        .btn-group-plus-minus { position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; }
+        .btn-circle { width: 30px; height: 30px; border: none; border-radius: 50%; color: white; font-weight: bold; cursor: pointer; }
         
-        label { display: block; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: #636e72; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #dfe6e9; border-radius: 6px; font-family: inherit; font-size: 0.95rem; }
-
-        /* Przyciski +/- obok siebie */
-        .action-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .btn-group-mini { display: flex; gap: 5px; }
-        .btn-mini { border: none; width: 32px; height: 32px; border-radius: 6px; color: white; cursor: pointer; font-weight: bold; }
-        .btn-plus { background: var(--accent); }
-        .btn-minus { background: var(--danger); }
-
-        .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem; }
-        .stats-table th { border-bottom: 2px solid var(--primary); padding: 8px; }
-        .stats-table td { padding: 8px; text-align: center; border-bottom: 1px solid #f1f2f6; font-weight: 600; }
-
-        .card { border: 1px solid #eee; padding: 15px; margin-top: 15px; border-radius: 10px; background: #fff; position: relative; }
         .rating-C { background-color: #d4edda !important; }
         .rating-NC { background-color: #fff3cd !important; }
         .rating-MNC { background-color: #f8d7da !important; }
 
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
-        .btn-save { flex: 1; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        
-        .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .img-preview { width: 100%; max-height: 150px; object-fit: contain; display: none; margin-top: 5px; border-radius: 4px; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 1000; }
+        .btn-main { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-pdf { background: var(--primary); color: white; }
+
+        .preview-img { width: 100%; max-height: 150px; object-fit: contain; display: none; margin-top: 5px; border-radius: 5px; }
     </style>
 </head>
 <body>
 
 <div id="audit-container">
     <div class="header-main">
-        <h1 style="color: var(--primary); font-size: 1.3rem; margin: 0 0 15px 0; text-align: center;">FORMULARZ AUDYTU HSEQ</h1>
-        
-        <div class="form-group" style="margin-bottom: 15px;">
-            <label>Nazwa projektu</label>
-            <input type="text" id="p_name" placeholder="Np. LK400 ME Kartoszyn">
-        </div>
-
-        <div class="row-inline">
+        <h1>FORMULARZ AUDYTU HSEQ 2026</h1>
+        <div class="row-grid">
+            <div style="grid-column: span 2;">
+                <label>Nazwa Projektu</label>
+                <input type="text" id="p_name" value="LK400 ME Kartoszyn">
+            </div>
             <div>
                 <label>Data Audytu</label>
                 <input type="date" id="p_date">
             </div>
             <div>
                 <label>Nr Projektu</label>
-                <input type="text" id="p_id" placeholder="Np. 250671">
+                <input type="text" id="p_id" value="250671">
             </div>
         </div>
 
-        <div class="photo-grid">
-            <div style="background: #fdfdfd; padding: 10px; border-radius: 8px;">
-                <label>📍 Mapa</label>
-                <input type="file" accept="image/*" onchange="preview(this)">
-                <img class="img-preview">
+        <div class="row-grid">
+            <div style="background:#f9f9f9; padding:10px; border-radius:8px;">
+                <label>📍 Mapa / Lokalizacja</label>
+                <input type="file" onchange="preview(this)">
+                <img class="preview-img">
             </div>
-            <div style="background: #fdfdfd; padding: 10px; border-radius: 8px;">
-                <label>🏗️ Widok ogólny</label>
-                <input type="file" accept="image/*" onchange="preview(this)">
-                <img class="img-preview">
+            <div style="background:#f9f9f9; padding:10px; border-radius:8px;">
+                <label>🏗️ Widok Ogólny</label>
+                <input type="file" onchange="preview(this)">
+                <img class="preview-img">
             </div>
         </div>
     </div>
@@ -79,32 +76,32 @@
     <table class="stats-table">
         <thead>
             <tr>
-                <th>Kategoria</th>
-                <th style="color: var(--primary)">C</th>
-                <th style="color: var(--danger)">NC/MNC</th>
+                <th>Kat.</th>
+                <th style="color: green;">C</th>
+                <th style="color: orange;">NC</th>
+                <th style="color: red;">MNC</th>
             </tr>
         </thead>
-        <tbody id="stats-body">
-            <tr><td colspan="3">Brak danych</td></tr>
-        </tbody>
+        <tbody id="stats-body"></tbody>
     </table>
 
-    <div id="observation-list"></div>
+    <div id="obs-list"></div>
 </div>
 
 <div class="nav-bar">
-    <button class="btn-save" onclick="exportPDF()">POBIERZ RAPORT PDF</button>
+    <button class="btn-main btn-pdf" onclick="savePDF()">GENERUJ PDF</button>
 </div>
 
 <script>
     document.getElementById('p_date').valueAsDate = new Date();
 
-    const allCategories = {
-        "300": "Organizacja Stanowiska Pracy",
-        "400": "Zaplecze budowy i organizacja",
-        "800": "Ochrona środowiska - operacyjne",
-        "1200": "Zarządzanie i nadzór (systemowy)",
-        "1500": "Decyzja środowiskowa"
+    // PEŁNA LISTA Z TWOICH ZDJĘĆ
+    const subCats = {
+        "300": ["301 - Porządek i organizacja stanowiska", "302 - Oznakowanie budowy", "303 - Środki ochrony indywidualnej", "304 - Znajomość procedur awaryjnych", "305 - Instruktaż stanowiskowy", "308 - Uprawnienia do maszyn", "311 - Zabezpieczenie ppoż (gaśnica)"],
+        "400": ["401 - Szkolenie wprowadzające", "402 - Pomieszczenia sanitarno-higieniczne", "405 - Porządek na zapleczu", "406 - Apteczka / ADR / Gaśnice", "408 - Miejsce zbiórki do ewakuacji", "409 - Oznakowanie składowania materiałów"],
+        "800": ["801 - Substancje niebezpieczne", "802 - Incydenty środowiskowe", "803 - Neutralizacja wycieków", "804 - Gospodarka odpadami", "805 - Emisje (hałas, pył)", "807 - Wyposażenie ADR/Sorbenty", "809 - Park maszynowy"],
+        "1200": ["1201 - Plan Zarządzania Środowiskowego", "1203 - Zewnętrzne inspekcje", "1204 - Raportowanie miesięczne", "1205 - Rejestry środowiskowe"],
+        "1500": ["1501 - Wycinka drzew i krzewów", "1504 - Wygrodzenia herpetologiczne", "1505 - Gospodarka wodami opadowymi", "1506 - Skarpy (wyjście dla gadów)", "1509 - Prace w terminach decyzji"]
     };
 
     function addPoint() {
@@ -113,55 +110,60 @@
         div.className = 'card obs-item';
         div.id = id;
         div.innerHTML = `
-            <div class="action-header">
-                <label>Punkt Audytowy</label>
-                <div class="btn-group-mini">
-                    <button class="btn-mini btn-plus" onclick="addPoint()">+</button>
-                    <button class="btn-mini btn-minus" onclick="removePoint('${id}')">−</button>
-                </div>
+            <div class="btn-group-plus-minus">
+                <button class="btn-circle" style="background:var(--accent)" onclick="addPoint()">+</button>
+                <button class="btn-circle" style="background:var(--danger)" onclick="removePoint('${id}')">−</button>
             </div>
-            
-            <select class="sel-cat" onchange="calc()">
-                <option value="">-- Wybierz kategorię --</option>
-                ${Object.entries(allCategories).map(([k,v]) => `<option value="${k}">${k} - ${v}</option>`).join('')}
+            <label>Kategoria Główna</label>
+            <select class="main-cat" onchange="updateSub(this)">
+                <option value="">-- Wybierz --</option>
+                <option value="300">300 - Organizacja Stanowiska</option>
+                <option value="400">400 - Zaplecze Budowy</option>
+                <option value="800">800 - Ochrona Środowiska</option>
+                <option value="1200">1200 - Zarządzanie</option>
+                <option value="1500">1500 - Decyzja Środowiskowa</option>
             </select>
 
-            <div class="row-inline" style="margin-top: 10px;">
-                <div>
-                    <label>Typ (dla 804)</label>
-                    <select>
-                        <option>-</option>
-                        <option>Odpady komunalne</option>
-                        <option>Odpady budowlane</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Firma</label>
-                    <input type="text" placeholder="Nazwa firmy">
-                </div>
+            <label style="margin-top:10px">Wymaganie Szczegółowe (Nr)</label>
+            <select class="sub-cat" onchange="calc()"><option value="">Najpierw wybierz kategorię...</option></select>
+
+            <div class="row-grid" style="margin-top:10px">
+                <div><label>Firma</label><input type="text" placeholder="Np. Enprom" oninput="calc()"></div>
+                <div><label>Typ (dla 804)</label><select><option>-</option><option>Komunalne</option><option>Budowlane</option></select></div>
             </div>
 
             <label style="margin-top:10px">Opis uwag</label>
-            <textarea rows="2" placeholder="Wpisz spostrzeżenia..."></textarea>
+            <textarea rows="2" placeholder="Opisz stan faktyczny..."></textarea>
 
             <label>Ocena</label>
             <select class="sel-rate" onchange="this.className='sel-rate rating-'+this.value; calc();">
                 <option value="">-- Wybierz --</option>
                 <option value="C">C - Zgodne</option>
                 <option value="NC">NC - Niezgodność</option>
-                <option value="MNC">MNC - Poważna Niezgodność</option>
+                <option value="MNC">MNC - Poważna</option>
             </select>
 
             <label>Zdjęcie</label>
             <input type="file" accept="image/*" capture="environment" onchange="preview(this)">
-            <img class="img-preview">
+            <img class="preview-img">
         `;
-        document.getElementById('observation-list').appendChild(div);
+        document.getElementById('obs-list').appendChild(div);
+    }
+
+    function updateSub(el) {
+        const sub = el.parentElement.querySelector('.sub-cat');
+        const val = el.value;
+        sub.innerHTML = '<option value="">-- Wybierz punkt --</option>';
+        if(subCats[val]) {
+            subCats[val].forEach(item => {
+                sub.innerHTML += `<option value="${item}">${item}</option>`;
+            });
+        }
+        calc();
     }
 
     function removePoint(id) {
-        const items = document.querySelectorAll('.obs-item');
-        if(items.length > 1) {
+        if(document.querySelectorAll('.obs-item').length > 1) {
             document.getElementById(id).remove();
             calc();
         }
@@ -176,31 +178,28 @@
     }
 
     function calc() {
-        const s = {};
-        document.querySelectorAll('.obs-item').forEach(el => {
-            const c = el.querySelector('.sel-cat').value;
-            const r = el.querySelector('.sel-rate').value;
-            if(c) {
-                if(!s[c]) s[c] = { ok: 0, fail: 0 };
-                if(r === 'C') s[c].ok++;
-                if(r === 'NC' || r === 'MNC') s[c].fail++;
+        const results = {};
+        document.querySelectorAll('.obs-item').forEach(card => {
+            const cat = card.querySelector('.main-cat').value;
+            const rate = card.querySelector('.sel-rate').value;
+            if(cat) {
+                if(!results[cat]) results[cat] = { c: 0, nc: 0, mnc: 0 };
+                if(rate === 'C') results[cat].c++;
+                if(rate === 'NC') results[cat].nc++;
+                if(rate === 'MNC') results[cat].mnc++;
             }
         });
+        
         const tbody = document.getElementById('stats-body');
         tbody.innerHTML = '';
-        Object.entries(s).forEach(([k, v]) => {
-            tbody.innerHTML += `<tr><td>${k}</td><td style="color:green">${v.ok}</td><td style="color:red">${v.fail}</td></tr>`;
+        Object.entries(results).forEach(([k, v]) => {
+            tbody.innerHTML += `<tr><td>${k}</td><td style="color:green">${v.c}</td><td style="color:orange">${v.nc}</td><td style="color:red">${v.mnc}</td></tr>`;
         });
     }
 
-    function exportPDF() {
+    function savePDF() {
         const element = document.getElementById('audit-container');
-        html2pdf().set({
-            margin: 5,
-            filename: `HSEQ_Audyt_${document.getElementById('p_id').value || 'Raport'}.pdf`,
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+        html2pdf().set({ margin: 5, filename: 'Raport_HSEQ_2026.pdf', html2canvas: { scale: 2 }, jsPDF: { format: 'a4' }}).from(element).save();
     }
 
     addPoint();
