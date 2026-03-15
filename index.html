@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobilny Audyt HSEQ</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 15px; background: #f4f7f6; color: #333; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        h2 { color: #0056b3; font-size: 1.2rem; margin-top: 0; }
+        label { display: block; margin: 10px 0 5px; font-weight: bold; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 1rem; }
+        .photo-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 5px; margin-top: 10px; display: none; }
+        button { background: #28a745; color: white; border: none; padding: 15px; border-radius: 5px; width: 100%; font-size: 1.1rem; cursor: pointer; margin-top: 10px; }
+        button.export { background: #007bff; }
+        .status-row { display: flex; gap: 10px; margin-top: 10px; }
+        .status-row div { flex: 1; text-align: center; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Nagłówek Audytu</h2>
+        <label>Nazwa projektu</label>
+        <input type="text" id="project" value="LK400 ME Kartoszyn Zarnowiec">
+        <label>Nr projektu</label>
+        <input type="text" id="projectNr" value="250671">
+        <label>Firma</label>
+        <input type="text" id="company" value="Enprom">
+    </div>
+
+    <div id="observations">
+        </div>
+
+    <button onclick="addObservation()">+ Dodaj punkt audytu</button>
+    <button class="export" onclick="exportToExcel()">Pobierz plik EXCEL (.xlsx)</button>
+
+    <script>
+        let observationCount = 0;
+
+        // Kategorie zaimportowane z Twojej tabeli (Środowisko i Jakość)
+        const categories = [
+            "ŚRODOWISKO: Gospodarka odpadami",
+            "ŚRODOWISKO: Wycieki i substancje niebezpieczne",
+            "ŚRODOWISKO: Ochrona gleby i wód",
+            "JAKOŚĆ: Dokumentacja na budowie",
+            "JAKOŚĆ: Zgodność z projektem",
+            "JAKOŚĆ: Kontrola dostaw materiałów"
+        ];
+
+        function addObservation() {
+            observationCount++;
+            const div = document.createElement('div');
+            div.className = 'card observation';
+            div.innerHTML = `
+                <h3>Punkt nr ${observationCount}</h3>
+                <label>Kategoria</label>
+                <select class="cat">
+                    ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+
+                <label>Opis uwagi / Sytuacji</label>
+                <textarea class="desc" placeholder="Np. Prawidłowa gospodarka odpadami..."></textarea>
+
+                <label>Ocena</label>
+                <select class="rating">
+                    <option value="C">C (Zgodne)</option>
+                    <option value="NC">NC (Niezgodność)</option>
+                    <option value="MNC">MNC (Poważna niezgodność)</option>
+                </select>
+
+                <label>Zdjęcie</label>
+                <input type="file" accept="image/*" capture="environment" onchange="previewImage(this)">
+                <img class="photo-preview">
+            `;
+            document.getElementById('observations').appendChild(div);
+        }
+
+        function previewImage(input) {
+            const img = input.nextElementSibling;
+            const file = input.files[0];
+            if (file) {
+                img.src = URL.createObjectURL(file);
+                img.style.display = 'block';
+            }
+        }
+
+        function exportToExcel() {
+            const data = [];
+            const observations = document.querySelectorAll('.observation');
+            
+            observations.forEach((obs, index) => {
+                data.push({
+                    "LP": index + 1,
+                    "Projekt": document.getElementById('project').value,
+                    "Firma": document.getElementById('company').value,
+                    "Kategoria": obs.querySelector('.cat').value,
+                    "Opis": obs.querySelector('.desc').value,
+                    "Ocena": obs.querySelector('.rating').value,
+                    "Data": new Date().toLocaleDateString()
+                });
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Audyt HSEQ");
+            
+            // Generowanie nazwy pliku z datą
+            const fileName = `Audyt_HSEQ_${new Date().toISOString().slice(0,10)}.xlsx`;
+            XLSX.writeFile(workbook, fileName);
+        }
+
+        // Dodaj pierwszy punkt na start
+        addObservation();
+    </script>
+</body>
+</html>
