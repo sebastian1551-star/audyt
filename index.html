@@ -3,173 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSEQ Audit Pro 2026</title>
+    <title>HSEQ Pro 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root { --primary: #00a651; --warning: #ffc107; --danger: #dc3545; --accent: #0056b3; --bg: #f4f7f6; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 10px; padding-bottom: 110px; color: #333; }
+        :root { --primary: #00a651; --warning: #ffc107; --danger: #dc3545; --accent: #0056b3; --bg: #f0f2f5; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 5px; padding-bottom: 80px; color: #333; font-size: 13px; }
         
         #audit-container { 
-            background: white; 
-            max-width: 800px; 
-            margin: auto; 
-            padding: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            width: 100%;
-            box-sizing: border-box;
+            background: white; max-width: 700px; margin: auto; padding: 12px; border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;
         }
 
-        .header-main { border-bottom: 4px solid var(--primary); padding-bottom: 15px; margin-bottom: 20px; }
-        h1 { font-size: 1.4rem; color: var(--primary); text-align: center; margin: 0 0 15px 0; font-weight: 700; text-transform: uppercase; }
+        .header-main { border-bottom: 3px solid var(--primary); margin-bottom: 10px; }
+        h1 { font-size: 1.1rem; color: var(--primary); text-align: center; margin: 5px 0; text-transform: uppercase; }
 
-        .info-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .info-bar { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
+        .geo-box { flex: 1; background: #f8f9fa; padding: 8px; border-radius: 6px; display: flex; align-items: center; gap: 5px; border: 1px solid #ddd; }
+        .counter-box { background: var(--primary); color: white; padding: 5px 10px; border-radius: 6px; text-align: center; min-width: 60px; }
+        .counter-box span { font-size: 1rem; font-weight: 800; display: block; }
+        .counter-box label { color: white; font-size: 0.5rem; margin: 0; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        label { display: block; font-weight: 700; font-size: 0.6rem; color: #666; text-transform: uppercase; margin-bottom: 2px; }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.85rem; box-sizing: border-box; }
+
+        .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 0.75rem; }
+        .stats-table th, .stats-table td { border: 1px solid #eee; padding: 5px; text-align: center; }
+        .stats-table th { background: #f8f9fa; }
+
+        .card { border: 1px solid #e0e0e0; padding: 10px; margin-top: 15px; border-radius: 8px; background: #fff; border-left: 4px solid var(--accent); position: relative; }
+        .point-number { position: absolute; top: -10px; left: 10px; background: var(--accent); color: white; padding: 1px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; }
         
-        .geo-box {
-            flex: 1; min-width: 250px; background: #f8f9fa; padding: 12px; border-radius: 8px;
-            display: flex; align-items: center; gap: 10px; border: 1px solid #dfe6e9;
-        }
-        
-        .counter-box {
-            background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 100px;
-        }
-        .counter-box span { font-size: 1.2rem; font-weight: 800; }
-        .counter-box label { color: white; font-size: 0.6rem; margin: 0; }
-
-        .btn-geo { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700; }
-        #geo-link { font-size: 0.8rem; color: var(--accent); text-decoration: none; font-weight: 600; }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-        label { display: block; font-weight: 700; font-size: 0.7rem; color: #7f8c8d; text-transform: uppercase; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #dfe6e9; border-radius: 6px; font-size: 0.9rem; font-family: inherit; box-sizing: border-box; background: #fff; }
-
-        .stats-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.85rem; }
-        .stats-table th { background: #f8f9fa; border: 1px solid #eee; padding: 10px; }
-        .stats-table td { padding: 10px; text-align: center; border: 1px solid #eee; font-weight: 700; }
-
-        .card { border: 1px solid #f1f2f6; padding: 15px; margin-top: 20px; border-radius: 10px; background: #fff; border-left: 6px solid var(--accent); position: relative; page-break-inside: avoid; }
-        .point-number { position: absolute; top: -12px; left: 10px; background: var(--accent); color: white; padding: 2px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
-        
-        .btn-group-top { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; }
-        .btn-circle { width: 32px; height: 32px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-        .footer-section { margin-top: 40px; padding-top: 20px; border-top: 2px solid #eee; }
+        .btn-group-top { position: absolute; top: 5px; right: 5px; display: flex; gap: 5px; }
+        .btn-circle { width: 28px; height: 28px; border: none; border-radius: 4px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
         .rating-C { background-color: #d4edda !important; }
         .rating-NC { background-color: #fff3cd !important; }
         .rating-MNC { background-color: #f8d7da !important; }
 
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; display: flex; gap: 10px; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 1000; }
-        .btn-pdf { flex: 1; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 10px; display: flex; gap: 8px; box-shadow: 0 -3px 10px rgba(0,0,0,0.1); z-index: 1000; }
+        .btn-pdf { flex: 1; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
         
-        .preview-img { width: 100%; max-height: 300px; object-fit: contain; display: none; margin-top: 15px; border-radius: 8px; border: 1px solid #ddd; }
-        
-        @media print {
-            .btn-group-top, .nav-bar, .btn-geo, input[type="file"] { display: none !important; }
-        }
+        .photo-container { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+        .preview-img { width: 100%; max-height: 200px; object-fit: cover; display: none; border-radius: 6px; }
+        .btn-download-img { background: #6c757d; color: white; border: none; padding: 5px; border-radius: 4px; font-size: 0.7rem; display: none; cursor: pointer; text-align: center; text-decoration: none; }
+
+        @media print { .btn-group-top, .nav-bar, .btn-geo, input[type="file"], .btn-download-img { display: none !important; } }
     </style>
 </head>
 <body>
 
 <div id="audit-container">
     <div class="header-main">
-        <h1>Raport Audytu HSEQ 2026</h1>
-        
+        <h1>HSEQ Audit 2026</h1>
         <div class="info-bar">
             <div class="geo-box">
-                <button type="button" class="btn-geo" onclick="getLocation()">📍 GPS</button>
-                <a id="geo-link" href="#" target="_blank">Lokalizacja: nieustalona</a>
+                <button type="button" class="btn-circle" style="background:var(--accent)" onclick="getLocation()">📍</button>
+                <a id="geo-link" href="#" target="_blank" style="font-size:0.7rem; color:var(--accent); text-decoration:none;">Ustal lokalizację...</a>
             </div>
             <div class="counter-box">
-                <label>PUNKTY</label>
-                <span id="total-points">1</span>
+                <label>PKT</label><span id="total-points">1</span>
             </div>
         </div>
-
         <div class="form-grid">
-            <div style="grid-column: span 2;">
-                <label>Nazwa Projektu</label>
-                <input type="text" id="p_name" value="LK400 ME Kartoszyn">
-            </div>
-            <div>
-                <label>Data Audytu</label>
-                <input type="date" id="p_date">
-            </div>
-            <div>
-                <label>Nr Projektu</label>
-                <input type="text" id="p_id" placeholder="Wpisz numer...">
-            </div>
+            <div style="grid-column: span 2;"><label>Projekt</label><input type="text" id="p_name" value="LK400 ME Kartoszyn"></div>
+            <div><label>Data</label><input type="date" id="p_date"></div>
+            <div><label>Nr Proj.</label><input type="text" id="p_id" placeholder="Numer..."></div>
         </div>
     </div>
 
-    <table class="stats-table">
-        <thead>
-            <tr>
-                <th style="text-align: left;">Kategoria</th>
-                <th style="color: var(--primary); width: 60px;">C</th>
-                <th style="color: orange; width: 60px;">NC</th>
-                <th style="color: var(--danger); width: 60px;">MNC</th>
-            </tr>
-        </thead>
-        <tbody id="stats-body"></tbody>
-    </table>
-
+    <table class="stats-table"><tbody id="stats-body"></tbody></table>
     <div id="obs-list"></div>
 
-    <div class="footer-section">
+    <div style="margin-top:20px; border-top:1px solid #eee; padding-top:10px;">
         <div class="form-grid">
-            <div>
-                <label>Audytor</label>
-                <input type="text" id="p_auditor" placeholder="Imię i Nazwisko">
-            </div>
-            <div>
-                <label>Osoba towarzysząca</label>
-                <input type="text" id="p_escort" placeholder="Imię i Nazwisko">
-            </div>
+            <div><label>Audytor</label><input type="text" id="p_auditor"></div>
+            <div><label>Osoba tow.</label><input type="text" id="p_escort"></div>
         </div>
-        <p style="font-size: 0.7rem; color: #aaa; text-align: center; margin-top: 30px;">Raport wygenerowany automatycznie przez system HSEQ Pro 2026</p>
     </div>
 </div>
 
 <div class="nav-bar">
-    <button class="btn-pdf" onclick="savePDF()">POBIERZ RAPORT PDF</button>
+    <button class="btn-pdf" onclick="savePDF()">GENERUJ RAPORT PDF</button>
 </div>
 
 <script>
     document.getElementById('p_date').valueAsDate = new Date();
 
     const database = {
-        "300": ["301 - Porządek i org. stanowiska", "302 - Oznakowanie budowy", "303 - Dobór ŚOI", "304 - Procedury awaryjne", "305 - Instruktaż stanowiskowy", "308 - Uprawnienia", "311 - Gaśnice"],
-        "400": ["401 - Szkolenie HSEQ", "402 - Sanitariaty", "405 - Porządek zaplecze", "406 - Apteczka/ADR", "408 - Ewakuacja", "409 - Składowanie"],
-        "800": ["801 - Subst. niebezpieczne", "802 - Incydenty", "803 - Neutralizacja", "804 - Odpady", "805 - Emisje", "807 - Sorbenty", "809 - Maszyny"],
-        "1200": ["1201 - Plan Zarządzania", "1203 - Audyty zewn.", "1204 - Raporty", "1205 - Rejestry"],
-        "1500": ["1501 - Wycinka", "1504 - Herpetologia", "1505 - Wody opadowe", "1506 - Skarpy", "1509 - Terminy prac"]
+        "300": ["301-Porządek", "302-Oznakowanie", "303-ŚOI", "304-Awarie", "308-Uprawnienia"],
+        "400": ["401-Szkolenie", "402-Sanitariaty", "406-Apteczka", "409-Składowanie"],
+        "800": ["801-Substancje", "804-Odpady", "807-Sorbenty", "809-Maszyny"],
+        "1500": ["1501-Wycinka", "1504-Herpeto", "1506-Skarpy"]
     };
 
     function getLocation() {
-        const link = document.getElementById('geo-link');
         if (navigator.geolocation) {
-            link.innerText = "Pobieranie...";
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    link.href = `https://www.google.com/maps?q=${lat},${lon}`;
-                    link.innerText = `📍 Współrzędne: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-                },
-                () => { link.innerText = "Błąd GPS"; }
-            );
+            document.getElementById('geo-link').innerText = "Namierzanie...";
+            navigator.geolocation.getCurrentPosition((p) => {
+                const lat = p.coords.latitude.toFixed(5), lon = p.coords.longitude.toFixed(5);
+                document.getElementById('geo-link').href = `https://www.google.com/maps?q=${lat},${lon}`;
+                document.getElementById('geo-link').innerText = `GPS: ${lat}, ${lon}`;
+            });
         }
-    }
-
-    function updateNumbers() {
-        const items = document.querySelectorAll('.obs-item');
-        items.forEach((item, index) => {
-            item.querySelector('.point-number').innerText = `PUNKT ${index + 1}`;
-        });
-        document.getElementById('total-points').innerText = items.length;
     }
 
     function addPoint() {
@@ -178,34 +115,31 @@
         div.className = 'card obs-item';
         div.id = id;
         div.innerHTML = `
-            <div class="point-number">PUNKT</div>
+            <div class="point-number">PKT</div>
             <div class="btn-group-top">
                 <button class="btn-circle" style="background:var(--accent)" onclick="addPoint()">+</button>
                 <button class="btn-circle" style="background:var(--danger)" onclick="removePoint('${id}')">−</button>
             </div>
-            <label style="margin-top:5px">Kategoria i Wymaganie</label>
-            <div class="form-grid">
+            <div class="form-grid" style="margin-top:5px">
                 <select class="main-cat" onchange="updateSub(this)">
-                    <option value="">Wybierz grupę...</option>
-                    <option value="300">300 - Stanowisko</option>
-                    <option value="400">400 - Zaplecze</option>
-                    <option value="800">800 - Środowisko</option>
-                    <option value="1200">1200 - System</option>
-                    <option value="1500">1500 - Decyzja</option>
+                    <option value="">Grupa...</option>
+                    <option value="300">300-Stanowisko</option><option value="400">400-Zaplecze</option>
+                    <option value="800">800-Środowisko</option><option value="1500">1500-Natura</option>
                 </select>
-                <select class="sub-cat" onchange="calc()"><option value="">Wybierz punkt...</option></select>
+                <select class="sub-cat" onchange="calc()"><option value="">Punkt...</option></select>
             </div>
             <div class="form-grid">
-                <div><label>Wykonawca</label><input type="text" oninput="calc()"></div>
                 <div><label>Ocena</label>
                 <select class="sel-rate" onchange="this.className='sel-rate rating-'+this.value; calc();">
-                    <option value="">--</option><option value="C">Zgodny (C)</option><option value="NC">Niezgodność (NC)</option><option value="MNC">Poważna (MNC)</option>
+                    <option value="">--</option><option value="C">C</option><option value="NC">NC</option><option value="MNC">MNC</option>
                 </select></div>
+                <div><label>Zdjęcie</label><input type="file" accept="image/*" capture="environment" onchange="preview(this)"></div>
             </div>
-            <label>Opis / Uwagi</label>
-            <textarea rows="2" placeholder="Opisz stan faktyczny..."></textarea>
-            <input type="file" accept="image/*" capture="environment" onchange="preview(this)" style="margin-top:10px">
-            <img class="preview-img">
+            <textarea rows="1" placeholder="Uwagi..." style="margin-top:5px"></textarea>
+            <div class="photo-container">
+                <img class="preview-img">
+                <a class="btn-download-img">💾 ZAPISZ KOPIĘ ZDJĘCIA W TELEFONIE</a>
+            </div>
         `;
         document.getElementById('obs-list').appendChild(div);
         updateNumbers();
@@ -213,22 +147,33 @@
 
     function updateSub(el) {
         const sub = el.parentElement.querySelector('.sub-cat');
-        sub.innerHTML = '<option value="">-- Wybierz punkt --</option>';
+        sub.innerHTML = '<option value="">Punkt...</option>';
         if(database[el.value]) database[el.value].forEach(i => sub.innerHTML += `<option value="${i}">${i}</option>`);
         calc();
     }
 
     function removePoint(id) {
-        if(document.querySelectorAll('.obs-item').length > 1) { 
-            document.getElementById(id).remove(); 
-            updateNumbers();
-            calc(); 
-        }
+        if(document.querySelectorAll('.obs-item').length > 1) { document.getElementById(id).remove(); updateNumbers(); calc(); }
     }
 
     function preview(input) {
-        const img = input.nextElementSibling;
-        if (input.files[0]) { img.src = URL.createObjectURL(input.files[0]); img.style.display = 'block'; }
+        const container = input.parentElement.parentElement.parentElement;
+        const img = container.querySelector('.preview-img');
+        const dlBtn = container.querySelector('.btn-download-img');
+        if (input.files[0]) {
+            const url = URL.createObjectURL(input.files[0]);
+            img.src = url;
+            img.style.display = 'block';
+            dlBtn.href = url;
+            dlBtn.download = `HSEQ_Foto_${Date.now()}.jpg`;
+            dlBtn.style.display = 'block';
+        }
+    }
+
+    function updateNumbers() {
+        const items = document.querySelectorAll('.obs-item');
+        items.forEach((item, index) => item.querySelector('.point-number').innerText = `PKT ${index + 1}`);
+        document.getElementById('total-points').innerText = items.length;
     }
 
     function calc() {
@@ -238,40 +183,26 @@
             const rate = card.querySelector('.sel-rate').value;
             if(cat) {
                 if(!stats[cat]) stats[cat] = { c: 0, nc: 0, mnc: 0 };
-                if(rate === 'C') stats[cat].c++;
-                if(rate === 'NC') stats[cat].nc++;
-                if(rate === 'MNC') stats[cat].mnc++;
+                if(rate) stats[cat][rate.toLowerCase()]++;
             }
         });
         const tbody = document.getElementById('stats-body');
-        tbody.innerHTML = '';
+        tbody.innerHTML = '<tr><th>Kat.</th><th>C</th><th>NC</th><th>MNC</th></tr>';
         Object.entries(stats).forEach(([k, v]) => {
-            tbody.innerHTML += `<tr><td style="text-align:left">${k}</td><td>${v.c}</td><td>${v.nc}</td><td>${v.mnc}</td></tr>`;
+            tbody.innerHTML += `<tr><td>${k}</td><td>${v.c}</td><td>${v.nc}</td><td>${v.mnc}</td></tr>`;
         });
     }
 
     function savePDF() {
         const element = document.getElementById('audit-container');
         const projId = document.getElementById('p_id').value || "Raport";
-        
-        element.style.width = "800px"; 
-
         const options = {
-            margin: [10, 10],
-            filename: 'HSEQ_' + projId + '.pdf',
-            image: { type: 'jpeg', quality: 0.95 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
-                logging: false,
-                windowWidth: 800 
-            },
+            margin: 5, filename: `HSEQ_${projId}.pdf`,
+            image: { type: 'jpeg', quality: 0.8 },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-
-        html2pdf().set(options).from(element).save().then(() => {
-            element.style.width = "100%";
-        });
+        html2pdf().set(options).from(element).save();
     }
 
     addPoint();
