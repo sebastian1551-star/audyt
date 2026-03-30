@@ -1,9 +1,12 @@
+Dodałem nowe projekty do Twojej "inteligentnej listy" oraz wprowadziłem kluczową zmianę w obsłudze zdjęć.
+Ważna uwaga techniczna: Przeglądarki internetowe (ze względów bezpieczeństwa) nie pozwalają stronom www na cichy zapis plików bezpośrednio do folderu DCIM/Galeria telefonu bez wiedzy użytkownika. Aby zdjęcia "nie znikały" i trafiły do galerii, dodałem funkcję automatycznego pobierania (Auto-Download). W momencie, gdy zrobisz zdjęcie aparatem wewnątrz raportu, telefon zainicjuje pobranie tego pliku – dzięki temu kopia zdjęcia wyląduje w folderze "Pobrane" lub "Galeria", nawet jeśli zamkniesz przeglądarkę.
+Oto gotowy kod:
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSEQ Pro 2026 - Auto-Fill Edition</title>
+    <title>HSEQ Pro 2026 - Final Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -18,7 +21,6 @@
         label { font-weight: 700; font-size: 0.45rem; color: #666; text-transform: uppercase; }
         input, select, textarea { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.75rem; font-family: inherit; box-sizing: border-box; }
 
-        /* Tabela i Liczniki */
         .stats-wrapper { padding: 4px; border-radius: 4px; margin-bottom: 6px; border: 1px solid #ddd; }
         .stats-table { width: 100%; border-collapse: collapse; font-size: 0.65rem; }
         .stats-table td, .stats-table th { border: 1px solid rgba(0,0,0,0.1); padding: 4px; text-align: center; }
@@ -30,7 +32,6 @@
 
         .total-counter { background: #333; color: white; padding: 6px; border-radius: 3px; margin-top: 4px; display: flex; justify-content: space-around; font-weight: 800; font-size: 0.75rem; }
 
-        /* Karty Punktów */
         .card { border: 1px solid #ddd; padding: 5px; margin-top: 15px; border-radius: 4px; background: #fff; border-left: 4px solid var(--accent); position: relative; }
         .point-number { position: absolute; top: -10px; left: 5px; background: var(--accent); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.65rem; font-weight: 700; }
         
@@ -62,12 +63,14 @@
                 <select id="p_id" onchange="autoFillProject()">
                     <option value="">Wybierz SAP...</option>
                     <option value="250 441">250 441</option>
+                    <option value="200 000">200 000</option>
+                    <option value="251 236">251 236</option>
                     <option value="Inny">Inny...</option>
                 </select>
             </div>
             <div>
                 <label>Projekt</label>
-                <input type="text" id="p_name" oninput="saveData()" placeholder="Nazwa wskoczy sama...">
+                <input type="text" id="p_name" oninput="saveData()" placeholder="Nazwa kontraktu">
             </div>
             <div><label>Audytor</label><input type="text" id="p_auditor" placeholder="Imię Nazwisko" oninput="saveData()"></div>
             <div><label>Data</label><input type="date" id="p_date" onchange="saveData()"></div>
@@ -101,9 +104,11 @@
 </div>
 
 <script>
-    // MAPA PROJEKTÓW: SAP -> NAZWA
+    // MAPA PROJEKTÓW
     const projectMap = {
         "250 441": "Linia 110 kV Radzyń-Łuków",
+        "200 000": "SE Rokitnica",
+        "251 236": "Linia 110 kV Bolesławiec",
         "Inny": ""
     };
 
@@ -124,7 +129,7 @@
     }
 
     window.onload = () => {
-        const saved = localStorage.getItem('hseq_pro_v4');
+        const saved = localStorage.getItem('hseq_pro_v5');
         if (saved) loadData(JSON.parse(saved));
         else { 
             document.getElementById('p_date').valueAsDate = new Date(); 
@@ -162,8 +167,8 @@
                 <input type="text" placeholder="Notatka..." oninput="saveData()">
             </div>
             <div class="photo-grid">
-                <div class="photo-box"><label>📷 FOTO PROBLEM</label><input type="file" accept="image/*" capture="environment" onchange="preview(this)"><img class="preview-img"></div>
-                <div class="photo-box"><label>📷 FOTO POPRAWA</label><input type="file" accept="image/*" capture="environment" onchange="preview(this)"><img class="preview-img"></div>
+                <div class="photo-box"><label>📷 FOTO PROBLEM</label><input type="file" accept="image/*" capture="environment" onchange="previewAndSave(this)"><img class="preview-img"></div>
+                <div class="photo-box"><label>📷 FOTO POPRAWA</label><input type="file" accept="image/*" capture="environment" onchange="previewAndSave(this)"><img class="preview-img"></div>
             </div>
         `;
         document.getElementById('obs-list').appendChild(div);
@@ -186,7 +191,6 @@
     function calc() {
         const stats = {};
         let grandTotal = 0, sumC = 0, sumNC = 0, sumMNC = 0;
-        
         document.querySelectorAll('.obs-item').forEach(card => {
             const sub = card.querySelector('.sub-cat').value;
             const rate = card.querySelector('.sel-rate').value;
@@ -201,25 +205,38 @@
                 }
             }
         });
-
         const tbody = document.getElementById('stats-body');
         tbody.innerHTML = '';
         Object.entries(stats).sort().forEach(([k, v]) => {
             let rowClass = v.mnc > 0 ? 'row-mnc' : (v.nc > 0 ? 'row-nc' : 'row-c');
             tbody.innerHTML += `<tr class="${rowClass}"><td style="text-align:left"><b>${k}</b></td><td>${v.c}</td><td>${v.nc}</td><td>${v.mnc}</td></tr>`;
         });
-
         document.getElementById('total-pts').innerText = grandTotal;
         document.getElementById('total-c').innerText = sumC;
         document.getElementById('total-nc').innerText = sumNC;
         document.getElementById('total-mnc').innerText = sumMNC;
     }
 
-    function preview(input) {
+    // NOWA FUNKCJA: Preview i Zapis do Galerii (Download)
+    function previewAndSave(input) {
         const img = input.parentElement.querySelector('.preview-img');
         if (input.files[0]) {
-            img.src = URL.createObjectURL(input.files[0]);
+            const file = input.files[0];
+            const url = URL.createObjectURL(file);
+            
+            // 1. Pokaż podgląd w raporcie
+            img.src = url;
             img.style.display = 'block';
+
+            // 2. Automatyczny zapis do galerii/pobranych
+            const sap = document.getElementById('p_id').value || 'HSEQ';
+            const timestamp = new Date().getTime();
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `HSEQ_${sap}_${timestamp}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     }
 
@@ -233,7 +250,7 @@
                 note: item.querySelector('input').value
             });
         });
-        localStorage.setItem('hseq_pro_v4', JSON.stringify({
+        localStorage.setItem('hseq_pro_v5', JSON.stringify({
             p_name: document.getElementById('p_name').value,
             p_id: document.getElementById('p_id').value,
             p_date: document.getElementById('p_date').value,
@@ -265,8 +282,7 @@
 
     function removePoint(id) {
         if(document.querySelectorAll('.obs-item').length > 1) { 
-            document.getElementById(id).remove(); 
-            updateNumbers(); calc(); saveData(); 
+            document.getElementById(id).remove(); updateNumbers(); calc(); saveData(); 
         }
     }
 
@@ -284,3 +300,4 @@
 </script>
 </body>
 </html>
+
