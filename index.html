@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HSEQ Pro 2026 - Final Edition</title>
+    <title>HSEQ Pro 2026 - UX Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -14,44 +14,41 @@
         .header-main { border-bottom: 2px solid var(--primary); margin-bottom: 4px; padding-bottom: 2px; }
         h1 { font-size: 0.9rem; color: var(--primary); text-align: center; margin: 0; text-transform: uppercase; font-weight: 800; }
 
-        /* Sekcja Mapy */
-        .map-section { background: #f9f9f9; border: 1px dashed #bbb; padding: 4px; margin-bottom: 5px; text-align: center; border-radius: 4px; }
-        .map-section label { font-size: 0.5rem; color: var(--accent); font-weight: 800; display: block; }
-        
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px; }
         label { font-weight: 700; font-size: 0.45rem; color: #666; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.75rem; font-family: inherit; box-sizing: border-box; }
+        input, select, textarea { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.75rem; font-family: inherit; box-sizing: border-box; }
 
-        /* Tabela Zbiorcza */
-        .stats-wrapper { padding: 4px; border-radius: 4px; margin-bottom: 6px; border: 1px solid #ddd; transition: 0.3s; }
-        .status-ok { background: #e8f5e9; border-color: #00a651; }
-        .status-warn { background: #fffde7; border-color: #fbc02d; }
-        .status-err { background: #ffebee; border-color: #d32f2f; }
+        /* Tabela Zbiorcza - Nowe Style Kolorów */
+        .stats-wrapper { padding: 4px; border-radius: 4px; margin-bottom: 6px; border: 1px solid #ddd; }
+        .stats-table { width: 100%; border-collapse: collapse; font-size: 0.65rem; }
+        .stats-table td, .stats-table th { border: 1px solid rgba(0,0,0,0.1); padding: 4px; text-align: center; }
+        .stats-table th { background: #eee; font-weight: 800; }
         
-        .stats-table { width: 100%; border-collapse: collapse; font-size: 0.6rem; background: rgba(255,255,255,0.7); }
-        .stats-table td, .stats-table th { border: 1px solid rgba(0,0,0,0.1); padding: 2px; text-align: center; }
-        .stats-table th { background: rgba(0,0,0,0.05); font-weight: 800; }
+        /* Kolory wierszy statystyk */
+        .row-c { background-color: #e8f5e9; color: #1b5e20; }   /* Zielony */
+        .row-nc { background-color: #fffde7; color: #827717; }  /* Żółty */
+        .row-mnc { background-color: #ffebee; color: #b71c1c; } /* Czerwony */
 
         /* Karty Punktów */
-        .card { border: 1px solid #ddd; padding: 5px; margin-top: 8px; border-radius: 4px; background: #fff; border-left: 3px solid var(--accent); position: relative; }
-        .point-number { position: absolute; top: -6px; left: 5px; background: var(--accent); color: white; padding: 0 5px; border-radius: 10px; font-size: 0.55rem; font-weight: 700; }
+        .card { border: 1px solid #ddd; padding: 5px; margin-top: 12px; border-radius: 4px; background: #fff; border-left: 4px solid var(--accent); position: relative; }
+        .point-number { position: absolute; top: -8px; left: 5px; background: var(--accent); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.6rem; font-weight: 700; }
         
-        .btn-group { position: absolute; top: 2px; right: 2px; display: flex; gap: 3px; }
-        .btn-s { width: 18px; height: 18px; border: none; border-radius: 3px; color: white; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+        /* POWIĘKSZONE PRZYCISKI - Obsługa palcem */
+        .btn-group { position: absolute; top: -10px; right: 2px; display: flex; gap: 8px; }
+        .btn-s { width: 32px; height: 32px; border: none; border-radius: 50%; color: white; cursor: pointer; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
-        .rating-C { background-color: #c8e6c9 !important; }
-        .rating-NC { background-color: #fff9c4 !important; }
-        .rating-MNC { background-color: #ffcdd2 !important; }
+        .rating-C { background-color: #c8e6c9 !important; font-weight: bold; }
+        .rating-NC { background-color: #fff9c4 !important; font-weight: bold; }
+        .rating-MNC { background-color: #ffcdd2 !important; font-weight: bold; }
 
         .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 4px; }
         .photo-box { background: #fafafa; border: 1px solid #eee; padding: 2px; border-radius: 2px; text-align: center; }
-        .photo-box label { font-size: 0.4rem; font-weight: 800; color: #444; }
-        .preview-img { width: 100%; max-height: 90px; object-fit: cover; display: none; margin-top: 2px; border-radius: 2px; }
+        .preview-img { width: 100%; max-height: 100px; object-fit: cover; display: none; margin-top: 2px; border-radius: 2px; }
 
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 8px; display: flex; gap: 6px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
-        .btn-main { flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: 700; color: white; cursor: pointer; font-size: 0.8rem; text-transform: uppercase; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 10px; display: flex; gap: 8px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; }
+        .btn-main { flex: 1; padding: 14px; border: none; border-radius: 8px; font-weight: 700; color: white; cursor: pointer; font-size: 0.9rem; text-transform: uppercase; }
 
-        @media print { .btn-group, .nav-bar, input[type="file"], .map-section label { display: none !important; } }
+        @media print { .btn-group, .nav-bar, input[type="file"] { display: none !important; } }
     </style>
 </head>
 <body>
@@ -60,51 +57,30 @@
     <div class="header-main">
         <h1>HSEQ Audit Report 2026</h1>
         <div class="form-grid" style="margin-top:5px">
-            <div><label>Projekt</label>
-                <select id="p_name" onchange="saveData()">
-                    <option value="Linia 110 kv RADZYŃ-ŁUKÓW">Linia 110 kv RADZYŃ-ŁUKÓW</option>
-                    <option value="Stacja Elektroenergetyczna">Stacja Elektroenergetyczna</option>
-                    <option value="Inny">Inny...</option>
-                </select>
-            </div>
-            <div><label>Nr SAP</label>
-                <select id="p_id" onchange="saveData()">
-                    <option value="250441">250441</option>
-                    <option value="Inny">Inny...</option>
-                </select>
-            </div>
+            <div><label>Projekt</label><input type="text" id="p_name" oninput="saveData()" placeholder="Nazwa kontraktu"></div>
+            <div><label>Nr SAP</label><input type="text" id="p_id" oninput="saveData()" placeholder="Numer SAP"></div>
             <div><label>Audytor</label><input type="text" id="p_auditor" placeholder="Imię Nazwisko" oninput="saveData()"></div>
             <div><label>Data</label><input type="date" id="p_date" onchange="saveData()"></div>
         </div>
     </div>
 
-    <div class="map-section">
-        <label>📸 SCREEN LOKALIZACJI Z MAPY</label>
-        <input type="file" accept="image/*" onchange="preview(this)">
-        <img class="preview-img" style="max-height: 110px; width: auto; margin: 3px auto;">
-    </div>
-
-    <div id="stats-container" class="stats-wrapper status-ok">
+    <div id="stats-container" class="stats-wrapper">
         <table class="stats-table">
-            <thead><tr><th>PUNKT HSEQ</th><th>C (OK)</th><th>NC (BŁĄD)</th><th>MNC (KRYT)</th></tr></thead>
+            <thead><tr><th>PUNKT HSEQ</th><th>C (Zgodny)</th><th>NC (Błąd)</th><th>MNC (Kryt)</th></tr></thead>
             <tbody id="stats-body"></tbody>
         </table>
     </div>
     
     <div id="obs-list"></div>
 
-    <div class="card" style="border-left: 3px solid var(--primary); background: #fafffa; margin-bottom: 20px;">
+    <div class="card" style="border-left: 4px solid var(--primary); background: #fafffa; margin-bottom: 80px; margin-top: 20px;">
         <label>🏁 PODSUMOWANIE I ZALECENIA</label>
-        <textarea id="closing-desc" rows="2" placeholder="Wnioski ogólne z audytu..." oninput="saveData()"></textarea>
-        <div class="photo-box" style="margin-top:4px; border:none; padding:0;">
-            <input type="file" accept="image/*" capture="environment" onchange="preview(this)">
-            <img class="preview-img" style="max-height: 100px;">
-        </div>
+        <textarea id="closing-desc" rows="3" placeholder="Wnioski końcowe..." oninput="saveData()" style="margin-top:5px;"></textarea>
     </div>
 </div>
 
 <div class="nav-bar">
-    <button class="btn-main" style="background:#6c757d; max-width: 60px;" onclick="resetForm()">RESET</button>
+    <button class="btn-main" style="background:#6c757d; max-width: 80px;" onclick="resetForm()">RESET</button>
     <button class="btn-main" style="background:var(--primary);" onclick="savePDF()">GENERUJ PDF</button>
 </div>
 
@@ -117,9 +93,12 @@
     };
 
     window.onload = () => {
-        const saved = localStorage.getItem('hseq_pro_final_v1');
+        const saved = localStorage.getItem('hseq_pro_final_v2');
         if (saved) loadData(JSON.parse(saved));
-        else { document.getElementById('p_date').valueAsDate = new Date(); addPoint(); }
+        else { 
+            document.getElementById('p_date').valueAsDate = new Date(); 
+            addPoint(); 
+        }
         calc();
     };
 
@@ -129,24 +108,27 @@
         div.className = 'card obs-item';
         div.id = id;
         div.innerHTML = `
-            <div class="point-number">PKT</div>
+            <div class="point-number">PUNKT</div>
             <div class="btn-group">
-                <button class="btn-s" style="background:var(--accent)" onclick="addPoint()">+</button>
+                <button class="btn-s" style="background:var(--primary)" onclick="addPoint()">+</button>
                 <button class="btn-s" style="background:var(--danger)" onclick="removePoint('${id}')">−</button>
             </div>
-            <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-top:4px;">
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-top:8px;">
                 <select class="main-cat" onchange="updateSub(this); saveData();">
-                    <option value="">Kat...</option>
+                    <option value="">Kategoria...</option>
                     <option value="300">300-Stanowisko</option><option value="400">400-Zaplecze</option>
                     <option value="800">800-Środowisko</option><option value="1500">1500-Natura</option>
                 </select>
-                <select class="sub-cat" onchange="calc(); saveData();"><option value="">Punkt...</option></select>
+                <select class="sub-cat" onchange="calc(); saveData();"><option value="">Wybierz punkt...</option></select>
             </div>
-            <div class="form-grid" style="grid-template-columns: 60px 1fr;">
+            <div class="form-grid" style="grid-template-columns: 80px 1fr;">
                 <select class="sel-rate" onchange="this.className='sel-rate rating-'+this.value; calc(); saveData();">
-                    <option value="">Ocena</option><option value="C">C</option><option value="NC">NC</option><option value="MNC">MNC</option>
+                    <option value="">Ocena</option>
+                    <option value="C" style="background:#c8e6c9">C (Zgodny)</option>
+                    <option value="NC" style="background:#fff9c4">NC (Błąd)</option>
+                    <option value="MNC" style="background:#ffcdd2">MNC (Kryt)</option>
                 </select>
-                <input type="text" placeholder="Krótki opis / uwagi..." oninput="saveData()">
+                <input type="text" placeholder="Opisz co jest nie tak..." oninput="saveData()">
             </div>
             <div class="photo-grid">
                 <div class="photo-box"><label>⚠️ PROBLEM</label><input type="file" accept="image/*" capture="environment" onchange="preview(this)"><img class="preview-img"></div>
@@ -160,7 +142,7 @@
 
     function updateSub(el, savedValue = "") {
         const sub = el.parentElement.querySelector('.sub-cat');
-        sub.innerHTML = '<option value="">Punkt...</option>';
+        sub.innerHTML = '<option value="">Wybierz punkt...</option>';
         if(database[el.value]) database[el.value].forEach(i => {
             const opt = document.createElement('option');
             opt.value = i; opt.innerText = i;
@@ -171,44 +153,42 @@
 
     function calc() {
         const stats = {};
-        let worst = 'C';
         
         document.querySelectorAll('.obs-item').forEach(card => {
-            const cat = card.querySelector('.main-cat').value;
             const sub = card.querySelector('.sub-cat').value;
+            const cat = card.querySelector('.main-cat').value;
             const rate = card.querySelector('.sel-rate').value;
             
-            if(cat && rate) {
-                // ZAWSZE liczymy po konkretnym podpunkcie (np. 804), jeśli jest wybrany. 
-                // Jeśli nie - po kategorii (np. 800).
-                const key = sub || cat;
+            if((sub || cat) && rate) {
+                const key = sub || "Kat. " + cat;
                 if(!stats[key]) stats[key] = { c: 0, nc: 0, mnc: 0 };
                 stats[key][rate.toLowerCase()]++;
-                
-                if(rate === 'MNC') worst = 'MNC';
-                else if(rate === 'NC' && worst !== 'MNC') worst = 'NC';
             }
         });
 
-        // Kolorowanie nagłówka tabeli zbiorczej
-        const container = document.getElementById('stats-container');
-        container.className = 'stats-wrapper ' + (worst === 'MNC' ? 'status-err' : worst === 'NC' ? 'status-warn' : 'status-ok');
-
         const tbody = document.getElementById('stats-body');
         tbody.innerHTML = '';
+        
         Object.entries(stats).sort().forEach(([k, v]) => {
-            tbody.innerHTML += `<tr><td><b>${k}</b></td><td>${v.c}</td><td>${v.nc}</td><td>${v.mnc}</td></tr>`;
+            let rowClass = 'row-c';
+            if(v.mnc > 0) rowClass = 'row-mnc';
+            else if(v.nc > 0) rowClass = 'row-nc';
+
+            tbody.innerHTML += `
+                <tr class="${rowClass}">
+                    <td style="text-align:left"><b>${k}</b></td>
+                    <td>${v.c}</td>
+                    <td>${v.nc}</td>
+                    <td>${v.mnc}</td>
+                </tr>`;
         });
     }
 
     function preview(input) {
         const img = input.parentElement.querySelector('.preview-img');
         if (input.files[0]) {
-            const url = URL.createObjectURL(input.files[0]);
-            img.src = url; img.style.display = 'block';
-            // Pobieranie kopii zdjęcia do galerii
-            const a = document.createElement('a'); a.href = url;
-            a.download = `HSEQ_${Date.now()}.jpg`; a.click();
+            img.src = URL.createObjectURL(input.files[0]);
+            img.style.display = 'block';
         }
     }
 
@@ -222,7 +202,7 @@
                 note: item.querySelector('input').value
             });
         });
-        localStorage.setItem('hseq_pro_final_v1', JSON.stringify({
+        localStorage.setItem('hseq_pro_final_v2', JSON.stringify({
             p_name: document.getElementById('p_name').value,
             p_id: document.getElementById('p_id').value,
             p_date: document.getElementById('p_date').value,
@@ -233,27 +213,29 @@
     }
 
     function loadData(data) {
-        document.getElementById('p_name').value = data.p_name;
-        document.getElementById('p_id').value = data.p_id;
-        document.getElementById('p_date').value = data.p_date;
-        document.getElementById('p_auditor').value = data.p_auditor;
+        document.getElementById('p_name').value = data.p_name || "";
+        document.getElementById('p_id').value = data.p_id || "";
+        document.getElementById('p_date').value = data.p_date || "";
+        document.getElementById('p_auditor').value = data.p_auditor || "";
         document.getElementById('closing-desc').value = data.closing_desc || "";
-        data.points.forEach(p => {
-            const el = addPoint();
-            el.querySelector('.main-cat').value = p.cat;
-            updateSub(el.querySelector('.main-cat'), p.sub);
-            el.querySelector('.sel-rate').value = p.rate;
-            el.querySelector('.sel-rate').className = 'sel-rate rating-' + p.rate;
-            el.querySelector('input').value = p.note;
-        });
+        if(data.points && data.points.length > 0) {
+            data.points.forEach(p => {
+                const el = addPoint();
+                el.querySelector('.main-cat').value = p.cat;
+                updateSub(el.querySelector('.main-cat'), p.sub);
+                el.querySelector('.sel-rate').value = p.rate;
+                el.querySelector('.sel-rate').className = 'sel-rate rating-' + p.rate;
+                el.querySelector('input').value = p.note;
+            });
+        }
     }
 
     function updateNumbers() {
-        document.querySelectorAll('.obs-item').forEach((item, i) => item.querySelector('.point-number').innerText = i+1);
+        document.querySelectorAll('.obs-item').forEach((item, i) => item.querySelector('.point-number').innerText = 'PUNKT ' + (i+1));
     }
 
     function removePoint(id) {
-        if(document.querySelectorAll('.obs-item').length > 1 && confirm("Usunąć?")) { 
+        if(document.querySelectorAll('.obs-item').length > 1) { 
             document.getElementById(id).remove(); updateNumbers(); calc(); saveData(); 
         }
     }
@@ -262,12 +244,14 @@
 
     function savePDF() {
         const element = document.getElementById('audit-container');
-        html2pdf().set({
-            margin: 2, filename: `HSEQ_Raport_${document.getElementById('p_id').value}.pdf`,
-            image: { type: 'jpeg', quality: 0.8 },
-            html2canvas: { scale: 2 },
+        const opt = {
+            margin: 5,
+            filename: `HSEQ_${document.getElementById('p_id').value || 'Raport'}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        }).from(element).save();
+        };
+        html2pdf().set(opt).from(element).save();
     }
 </script>
 </body>
